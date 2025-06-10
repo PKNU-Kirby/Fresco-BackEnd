@@ -1,5 +1,7 @@
-package fresco.com.global.exception;
+package fresco.com.global.exception.handler;
 
+import fresco.com.global.exception.ExceptionResponseBody;
+import fresco.com.global.exception.RestApiException;
 import fresco.com.global.response.error.ErrorCode;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
