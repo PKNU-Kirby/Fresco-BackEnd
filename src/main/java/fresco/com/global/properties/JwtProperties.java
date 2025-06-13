@@ -16,7 +16,7 @@ public class JwtProperties {
     private Long accessTokenValidTime;
 
     @Value("${jwt.refresh_token.valid_time}")
-    private Long refreshTokenValidTime;
+    private Long refreshTokenValidTime ;
 
 
     public byte[] getBytesSecretKey() {

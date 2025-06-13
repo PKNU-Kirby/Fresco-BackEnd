@@ -28,11 +28,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (shouldNotFilter(request)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             String accessToken = jwtTokenProvider.extractAccessToken(request);
             authenticateWithAccessToken(accessToken);
             filterChain.doFilter(request, response);
@@ -47,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void authenticateWithAccessToken(String accessToken) {
         if (accessToken != null) {
             if (jwtTokenProvider.isExpiredToken(accessToken)) {
-                throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN, "만료된 토큰입니다.");
+                throw new RestApiException(AuthErrorCode.EXPIRED_ACCESS_TOKEN, "만료된 토큰입니다.");
             }
 
             Authentication authentication = jwtAuthenticationProvider.authenticate(new JwtAuthenticationToken(accessToken));
@@ -66,11 +61,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "details", ex.getMessage(),
                 "errors", ex.getErrors()
         );
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login");
     }
 }

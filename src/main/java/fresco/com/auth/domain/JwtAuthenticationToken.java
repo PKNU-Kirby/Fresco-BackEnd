@@ -3,21 +3,21 @@ package fresco.com.auth.domain;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
-    private Long userId;
+    private final CustomUserDetails userDetails;
     private String token;
 
     public JwtAuthenticationToken(String token) {
         super(null);
-        this.userId = null;
+        this.userDetails = null;
         this.token = token;
         setAuthenticated(false);
     }
 
-    public JwtAuthenticationToken(Long userId, String token) {
+    public JwtAuthenticationToken(CustomUserDetails userDetails, String token) {
         super(null);
-        this.userId = userId;
+        this.userDetails = userDetails;
         this.token = token;
-        super.setAuthenticated(true);
+        setAuthenticated(true);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return userId;
+        return this.userDetails;
     }
 
     @Override
