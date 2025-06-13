@@ -35,8 +35,16 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// Security
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-//	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Oauth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// Jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -54,6 +62,9 @@ dependencies {
 
 	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//Fcm
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
 }
 
 tasks.named('test') {
