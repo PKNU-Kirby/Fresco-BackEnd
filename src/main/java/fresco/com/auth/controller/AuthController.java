@@ -7,10 +7,7 @@ import fresco.com.global.response.SuccessResponse;
 import fresco.com.global.response.success.AuthSuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -18,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @GetMapping("/login")
-    public SuccessResponse<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
-        return SuccessResponse.of(AuthSuccessCode.LOGIN_SUCCESS, authService.login(req));
+    @PostMapping("/login")
+    public SuccessResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return SuccessResponse.of(AuthSuccessCode.LOGIN_SUCCESS, authService.login(request));
     }
 }
