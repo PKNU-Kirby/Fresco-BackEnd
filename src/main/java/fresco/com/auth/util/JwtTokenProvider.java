@@ -88,6 +88,7 @@ public class JwtTokenProvider {
             throw new RestApiException(AuthErrorCode.INVALID_TOKEN);
         }
     }
+
     // 토큰으로부터 토큰 ID 얻기
     public Long getTokenIdFromToken(final String token) {
         try {
