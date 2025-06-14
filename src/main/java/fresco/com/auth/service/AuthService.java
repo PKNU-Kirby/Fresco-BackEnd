@@ -14,6 +14,7 @@ import fresco.com.user.domain.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 @Service
@@ -27,6 +28,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public LoginResponse login(@Valid LoginRequest req) {
         SocialResponse profile = switch (req.provider()) {
             case KAKAO -> kakao.profile(req.accessToken());
