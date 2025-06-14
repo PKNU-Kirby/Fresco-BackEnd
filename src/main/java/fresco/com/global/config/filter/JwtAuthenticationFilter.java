@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void authenticateWithAccessToken(String accessToken) {
         if (accessToken != null) {
             if (jwtTokenProvider.isExpiredToken(accessToken)) {
-                throw new RestApiException(AuthErrorCode.EXPIRED_ACCESS_TOKEN, "만료된 토큰입니다.");
+                throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN, "만료된 토큰입니다.");
             }
 
             Authentication authentication = jwtAuthenticationProvider.authenticate(new JwtAuthenticationToken(accessToken));

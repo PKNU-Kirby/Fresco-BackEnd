@@ -86,7 +86,7 @@ public class JwtTokenProvider {
             Claims claims = getClaimsByToken(token);
             return claims.get("userId", Long.class);
         } catch (ExpiredJwtException e) {
-            throw new RestApiException(AuthErrorCode.EXPIRED_ACCESS_TOKEN);
+            throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN);
         } catch (Exception e) {
             throw new RestApiException(AuthErrorCode.INVALID_TOKEN);
         }
@@ -98,7 +98,7 @@ public class JwtTokenProvider {
             Claims claims = getClaimsByToken(token);
             return Long.parseLong(String.valueOf(claims.get("tokenId")));
         } catch (ExpiredJwtException e) {
-            throw new RestApiException(AuthErrorCode.EXPIRED_ACCESS_TOKEN);
+            throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN);
         } catch (Exception e) {
             throw new RestApiException(AuthErrorCode.INVALID_TOKEN);
         }
