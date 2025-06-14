@@ -1,6 +1,6 @@
 package fresco.com.auth.util;
 
-import fresco.com.auth.dto.request.UserDetailRequest;
+import fresco.com.auth.controller.dto.request.UserIdRequest;
 import fresco.com.global.exception.RestApiException;
 import fresco.com.global.properties.JwtProperties;
 import fresco.com.global.response.error.AuthErrorCode;
@@ -18,26 +18,26 @@ public class JwtTokenProvider {
     private final JwtProperties jwtProperties;
 
     // AccessToken 생성
-    public String generateAccessToken(final UserDetailRequest userDetail) {
+    public String generateAccessToken(final UserIdRequest userDetail) {
         Claims claims = getClaimsFrom(userDetail);
         return getTokenFrom(claims, jwtProperties.getAccessTokenValidTime() * 1000);
     }
 
     // AccessToken용 Claim 생성
-    private Claims getClaimsFrom(final UserDetailRequest userDetail) {
+    private Claims getClaimsFrom(final UserIdRequest userDetail) {
         Claims claims = Jwts.claims();
         claims.put("userId", userDetail.userId());
         return claims;
     }
 
     // RefrshToken 생성
-    public String generateRefreshToken(final UserDetailRequest user, final Long tokenId) {
+    public String generateRefreshToken(final UserIdRequest user, final Long tokenId) {
         Claims claims = getClaimsFrom(user, tokenId);
         return getTokenFrom(claims, jwtProperties.getRefreshTokenValidTime() * 1000);
     }
 
     // RefreshToken용 Claim 생성
-    private Claims getClaimsFrom(final UserDetailRequest user, final Long tokenId) {
+    private Claims getClaimsFrom(final UserIdRequest user, final Long tokenId) {
         Claims claims = Jwts.claims();
         claims.put("userId", user.userId());
         claims.put("tokenId", tokenId);
