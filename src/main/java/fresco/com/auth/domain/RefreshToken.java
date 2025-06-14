@@ -1,6 +1,6 @@
 package fresco.com.auth.domain;
 
-import fresco.com.member.domain.Member;
+import fresco.com.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -26,11 +26,11 @@ public class RefreshToken {
     private LocalDateTime recentLogin = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOUNT_UNIQUE_ID", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Member member;
+    @JoinColumn(name = "user_id", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 
-    public RefreshToken(Member member) {
-        this.member = member;
+    public RefreshToken(User user) {
+        this.user = user;
     }
 
     public Long getId() {
