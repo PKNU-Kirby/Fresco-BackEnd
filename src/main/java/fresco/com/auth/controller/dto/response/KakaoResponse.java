@@ -1,25 +1,22 @@
-package fresco.com.auth.dto.response;
+package fresco.com.auth.controller.dto.response;
 
+import fresco.com.auth.domain.Provider;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Map;
 
-public record KakaoResponse(@NotNull Map<String, Object> attributes) implements OAuth2Response {
+public record KakaoResponse(
+        @NotNull(message = "속성값 Map이 null이면 안 됩니다.")
+        Map<String, Object> attributes) implements SocialResponse {
 
     @Override
-    public String getProvider() {
-        return "kakao";
+    public Provider getProvider() {
+        return Provider.KAKAO;
     }
 
     @Override
     public String getProviderId() {
         return attributes.get("id").toString();
-    }
-
-    @Override
-    public String getEmail() {
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        return kakaoAccount != null ? kakaoAccount.get("email").toString() : null;
     }
 
     @Override
