@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 
 public record NaverResponse(
-        @NotNull(message = "속성값 Map이 null이면 안 됩니다.")
+        @NotNull(message = "null이면 안 됩니다.")
         Map<String, Object> attributes) implements SocialResponse {
 
     @Override
