@@ -5,12 +5,10 @@ import fresco.com.user.domain.User;
 
 public interface SocialResponse {
     Provider getProvider();
-
     String getProviderId();
-
     String getName();
 
-    default User toEntity() {
+    default User toEntity(){
         return User.of(this.getProvider(), this.getProviderId(), this.getName());
     }
 }
