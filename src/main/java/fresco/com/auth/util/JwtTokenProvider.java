@@ -7,37 +7,40 @@ import fresco.com.global.response.error.AuthErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
+@Validated
 public class JwtTokenProvider {
     private final JwtProperties jwtProperties;
 
     // AccessToken 생성
-    public String generateAccessToken(final UserIdRequest userDetail) {
+    public String generateAccessToken(@Valid UserIdRequest userDetail) {
         Claims claims = getClaimsFrom(userDetail);
         return getTokenFrom(claims, jwtProperties.getAccessTokenValidTime() * 1000);
     }
 
     // AccessToken용 Claim 생성
-    private Claims getClaimsFrom(final UserIdRequest userDetail) {
+    private Claims getClaimsFrom(@Valid UserIdRequest userDetail) {
         Claims claims = Jwts.claims();
         claims.put("userId", userDetail.userId());
         return claims;
     }
 
     // RefrshToken 생성
-    public String generateRefreshToken(final UserIdRequest user, final Long tokenId) {
+    public String generateRefreshToken(@Valid UserIdRequest user, Long tokenId) {
         Claims claims = getClaimsFrom(user, tokenId);
         return getTokenFrom(claims, jwtProperties.getRefreshTokenValidTime() * 1000);
     }
 
     // RefreshToken용 Claim 생성
-    private Claims getClaimsFrom(final UserIdRequest user, final Long tokenId) {
+    private Claims getClaimsFrom(@Valid UserIdRequest user, Long tokenId) {
         Claims claims = Jwts.claims();
         claims.put("userId", user.userId());
         claims.put("tokenId", tokenId);
@@ -45,7 +48,7 @@ public class JwtTokenProvider {
     }
 
     // claim 정보로 Token 얻기
-    private String getTokenFrom(final Claims claims, final long validTime) {
+    private String getTokenFrom(Claims claims, Long validTime) {
         Date now = new Date();
         return Jwts.builder()
                 .setHeaderParam("type", "JWT")
@@ -60,7 +63,7 @@ public class JwtTokenProvider {
     }
 
     // AccessToken 값만 남도록 접두사 삭제
-    public String extractAccessToken(final HttpServletRequest request) {
+    public String extractAccessToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);
@@ -68,7 +71,7 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public boolean isExpiredToken(final String token) {
+    public boolean isExpiredToken(String token) {
         try {
             Claims claims = getClaimsByToken(token);
             return claims.getExpiration().before(new Date());
@@ -78,7 +81,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰으로부터 유저 ID 얻기
-    public Long getUserIdFromToken(final String token) {
+    public Long getUserIdFromToken(String token) {
         try {
             Claims claims = getClaimsByToken(token);
             return claims.get("userId", Long.class);
@@ -90,7 +93,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰으로부터 토큰 ID 얻기
-    public Long getTokenIdFromToken(final String token) {
+    public Long getTokenIdFromToken(String token) {
         try {
             Claims claims = getClaimsByToken(token);
             return Long.parseLong(String.valueOf(claims.get("tokenId")));
