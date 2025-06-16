@@ -22,3 +22,4 @@ public class ReceiptController {
         return ResponseEntity.ok(receiptResponse);
     }
 }
+
