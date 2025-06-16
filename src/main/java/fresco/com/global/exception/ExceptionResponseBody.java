@@ -2,10 +2,10 @@ package fresco.com.global.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import java.util.List;
-
 import fresco.com.global.response.error.ErrorCode;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @JsonPropertyOrder(value = {"errorCode"})
