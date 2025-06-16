@@ -52,8 +52,8 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginSuccessResponse refreshAuthToken(@Valid RefreshTokenRequest request){
-        if(jwtTokenProvider.isExpiredToken(request.refreshToken())){
+    public LoginSuccessResponse refreshAuthToken(@Valid RefreshTokenRequest request) {
+        if (jwtTokenProvider.isExpiredToken(request.refreshToken())) {
             throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN);
         }
 
@@ -79,7 +79,7 @@ public class AuthService {
     private String generateRefreshToken(User user) {
         RefreshToken token = new RefreshToken(user);
 
-        if(refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
+        if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
             refreshTokenRepository.deleteAllByUser(user);
         }
 

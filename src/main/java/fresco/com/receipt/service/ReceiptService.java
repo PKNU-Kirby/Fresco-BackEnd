@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fresco.com.global.properties.NaverOcrProperties;
 import fresco.com.receipt.controller.dto.request.Base64EncodingImage;
 import fresco.com.receipt.controller.dto.request.ReceiptImageRequest;
-import fresco.com.receipt.controller.dto.response.*;
+import fresco.com.receipt.controller.dto.response.FoodPair;
+import fresco.com.receipt.controller.dto.response.ReceiptResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
