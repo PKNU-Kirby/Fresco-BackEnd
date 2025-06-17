@@ -34,7 +34,7 @@ public class RefrigeratorService {
     public RefrigeratorInfoResponse createRefrigerator(@Valid CreateRefrigeratorRequest request) {
         Refrigerator refrigerator = new Refrigerator(request.name());
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
+                .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER);
 
         Refrigerator savedRefrigerator = refrigeratorRepository.save(refrigerator);
         refrigeratorUserRepository.save(new RefrigeratorUser(refrigerator, user));
