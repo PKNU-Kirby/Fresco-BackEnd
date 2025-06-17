@@ -17,7 +17,7 @@ public class UserInfo {
         this.name = name;
     }
 
-    public static UserInfo from(User user){
+    public static UserInfo from(User user) {
         return new UserInfo(user.getId(), user.getProvider(), user.getProviderId(), user.getName());
     }
 }

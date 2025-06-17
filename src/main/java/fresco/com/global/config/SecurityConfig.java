@@ -59,6 +59,11 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager();
+    }
+
     static class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
         @Override
         public void commence(HttpServletRequest request,
@@ -69,10 +74,5 @@ public class SecurityConfig {
 
             response.getWriter().write("{\"code\": \"NP\", \"message\": \"No Permission.\"}");
         }
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager();
     }
 }
