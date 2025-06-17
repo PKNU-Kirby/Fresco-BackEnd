@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum RefrigeratorSuccessCode implements SuccessCode{
+public enum RefrigeratorSuccessCode implements SuccessCode {
     REFRIGERATOR_CREATE_SUCCESS("REFRIGERATOR_OK_001", HttpStatus.CREATED, "냉장고 생성 성공"),
     REFRIGERATOR_DELETE_SUCCESS("REFRIGERATOR_OK_002", HttpStatus.OK, "냉장고 삭제 성공"),
     REFRIGERATOR_UPDATE_SUCCESS("REFRIGERATOR_OK_003", HttpStatus.OK, "냉장고 정보 변경 성공"),
