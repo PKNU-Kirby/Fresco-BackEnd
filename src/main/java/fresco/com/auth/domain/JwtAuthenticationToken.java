@@ -17,7 +17,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         super(null);
         this.userInfo = userInfo;
         this.token = token;
-        setAuthenticated(true);
+        super.setAuthenticated(true);
     }
 
     @Override
