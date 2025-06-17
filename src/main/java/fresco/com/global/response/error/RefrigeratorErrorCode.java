@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ValidationErrorCode implements ErrorCode {
-    VALIDATION_FAILED("VALID_ERR_001", HttpStatus.BAD_REQUEST, "유효성 검증에 실패하였습니다.");
+public enum RefrigeratorErrorCode implements ErrorCode {
+    NULL_REFRIGERATOR("REFRIGERATOR_ERR_001", HttpStatus.BAD_REQUEST, "냉장고가 존재하지 않습니다.");
 
     private final String developCode;
     private final HttpStatus httpStatus;
