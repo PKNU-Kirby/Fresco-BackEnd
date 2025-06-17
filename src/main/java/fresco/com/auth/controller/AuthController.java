@@ -4,7 +4,6 @@ import fresco.com.auth.controller.dto.request.LoginRequest;
 import fresco.com.auth.controller.dto.request.RefreshTokenRequest;
 import fresco.com.auth.controller.dto.request.UserIdRequest;
 import fresco.com.auth.controller.dto.response.LoginSuccessResponse;
-import fresco.com.auth.domain.UserInfo;
 import fresco.com.auth.service.AuthService;
 import fresco.com.global.response.SuccessResponse;
 import fresco.com.global.response.success.AuthSuccessCode;
@@ -33,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public SuccessResponse<LoginSuccessResponse> logout(@AuthenticationPrincipal UserInfo userInfo) {
-        return SuccessResponse.of(AuthSuccessCode.LOGOUT_SUCCESS, authService.logout(new UserIdRequest(userInfo.getUserId())));
+    public SuccessResponse<LoginSuccessResponse> logout(@AuthenticationPrincipal Long userId) {
+        return SuccessResponse.of(AuthSuccessCode.LOGOUT_SUCCESS, authService.logout(new UserIdRequest(userId)));
     }
 }
