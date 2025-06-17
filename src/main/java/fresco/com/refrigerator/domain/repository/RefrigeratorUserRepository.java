@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUser, Long> {
@@ -21,4 +22,6 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
             "from RefrigeratorUser ru join ru.refrigerator r " +
             "where ru.user.id = :userId")
     List<RefrigeratorInfoResponse> findAllByUserId(Long userId);
+
+    Optional<RefrigeratorUser> findByRefrigeratorIdAndUserId(Long refrigeratorId, Long userId);
 }

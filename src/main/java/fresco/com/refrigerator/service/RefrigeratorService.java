@@ -3,10 +3,7 @@ package fresco.com.refrigerator.service;
 import fresco.com.global.exception.RestApiException;
 import fresco.com.global.response.error.AuthErrorCode;
 import fresco.com.global.response.error.RefrigeratorErrorCode;
-import fresco.com.refrigerator.controller.dto.request.CreateRefrigeratorRequest;
-import fresco.com.refrigerator.controller.dto.request.DeleteRefrigeratorRequest;
-import fresco.com.refrigerator.controller.dto.request.GetAllRefrigeratorRequest;
-import fresco.com.refrigerator.controller.dto.request.UpdateRefrigeratorRequest;
+import fresco.com.refrigerator.controller.dto.request.*;
 import fresco.com.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import fresco.com.refrigerator.domain.Refrigerator;
 import fresco.com.refrigerator.domain.RefrigeratorUser;
@@ -60,6 +57,27 @@ public class RefrigeratorService {
 
     @Transactional(readOnly = true)
     public List<RefrigeratorInfoResponse> getAllRefrigerator(GetAllRefrigeratorRequest request) {
+        return refrigeratorUserRepository.findAllByUserId(request.userId());
+    }
+
+    @Transactional
+    public List<RefrigeratorInfoResponse> addUserToRefrigerator(RefrigeratorUserRequest request) {
+        Refrigerator refrigerator = refrigeratorRepository.findById(request.refrigeratorId())
+                .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
+
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
+
+        refrigeratorUserRepository.save(new RefrigeratorUser(refrigerator, user));
+        return refrigeratorUserRepository.findAllByUserId(request.userId());
+    }
+
+    @Transactional
+    public List<RefrigeratorInfoResponse> deleteUserToRefrigerator(RefrigeratorUserRequest request) {
+        RefrigeratorUser refrigeratorUser = refrigeratorUserRepository.findByRefrigeratorIdAndUserId(request.refrigeratorId(), request.userId())
+                .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NOT_USER_OF_REFRIGERATOR));
+
+        refrigeratorUserRepository.delete(refrigeratorUser);
         return refrigeratorUserRepository.findAllByUserId(request.userId());
     }
 }
