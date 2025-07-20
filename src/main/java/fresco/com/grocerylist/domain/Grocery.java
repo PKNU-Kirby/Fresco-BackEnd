@@ -20,5 +20,5 @@ public class Grocery {
 
     private String name;
 
-    private boolean purchased;
+    private Boolean purchased;
 }

@@ -4,8 +4,10 @@ import fresco.com.grocerylist.domain.Grocery;
 import fresco.com.grocerylist.dto.GroceryDto;
 import fresco.com.grocerylist.service.GroceryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +30,7 @@ public class GroceryController {
 
     @PatchMapping("/{id}/purchased")
     public Grocery togglePurchased(@PathVariable Long id, @RequestBody Map<String, Boolean> body) {
-        boolean purchased = body.getOrDefault("purchased", false);
+        Boolean purchased = body.get("purchased");
         return groceryService.updatePurchased(id,purchased);
     }
 
@@ -39,8 +41,14 @@ public class GroceryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteItem(@PathVariable Long id) {
+
         groceryService.deleteItem(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "삭제 완료");
+
+        return ResponseEntity.ok(response);
+
     }
 }
 

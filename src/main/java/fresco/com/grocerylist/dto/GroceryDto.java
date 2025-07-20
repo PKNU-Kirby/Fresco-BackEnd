@@ -10,5 +10,5 @@ import lombok.*;
 public class GroceryDto {
     private Long id;
     private String name;
-    private boolean purchased;
+    private Boolean purchased;
 }
