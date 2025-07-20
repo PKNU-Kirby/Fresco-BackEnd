@@ -4,7 +4,10 @@ import fresco.com.auth.controller.dto.request.UserIdRequest;
 import fresco.com.global.exception.RestApiException;
 import fresco.com.global.properties.JwtProperties;
 import fresco.com.global.response.error.AuthErrorCode;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -104,7 +107,7 @@ public class JwtTokenProvider {
         }
     }
 
-    private Claims getClaimsByToken(String token){
+    private Claims getClaimsByToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(jwtProperties.getBytesSecretKey()))
                 .build()

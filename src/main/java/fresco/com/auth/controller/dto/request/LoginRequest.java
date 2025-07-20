@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 public record LoginRequest(
         @NotNull(message = "null이면 안됩니다.")
         Provider provider,
-        @NotBlank(message = "공백이면 안됩니다.")
+        @NotBlank(message = "빈 문자열이면 안됩니다.")
         String accessToken
 ) {
 }
