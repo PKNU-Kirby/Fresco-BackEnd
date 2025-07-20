@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private Long userId;
+    private String token;
 
     public JwtAuthenticationToken(String token) {
         super(null);
