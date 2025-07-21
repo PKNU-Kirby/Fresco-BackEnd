@@ -40,39 +40,3 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
-
-
-naver:
-  # naver ocr 설정 정보
-  ocr:
-    url: ${naver.client.url}
-    api-key: ${naver.client.api-key}
-
-  # naver 소셜로그인 설정 정보
-  client:
-    id: ${naver.client.id}
-    secret: ${naver.client.secret}
-
-# jwt 설정 정보
-jwt:
-  secret_key: ${jwt.secret_key}
-  access_token:
-    valid_time: ${jwt.access_token.valid_time}
-  refresh_token:
-    valid_time: ${jwt.refresh_token.valid_time}
-
-
-# kakao 소셜로그인 설정 정보
-kakao:
-  client:
-    id: 018d590b277904bc08733515ba490ed8
-    secret: 5q1fqvUz8HS8jGtjkGWDUjblL1lHjWk9
-
-
-# 소셜 로그인 리다이렉트 허용 URI
-app:
-  oauth2:
-    authorized-redirect-uris:
-      - http://localhost:3000/oauth2/redirect
-      - http://127.0.0.1:3000/oauth2/redirect
-      - https://yourdomain.com/oauth2/redirect
