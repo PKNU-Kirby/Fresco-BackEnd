@@ -9,7 +9,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,4 +20,12 @@ public class Grocery {
     private String name;
 
     private Boolean purchased;
+
+    public void updateName(String newName) {
+        this.name = newName;
+    }
+
+    public void updatePurchased(Boolean newPurchased) {
+        this.purchased = newPurchased;
+    }
 }

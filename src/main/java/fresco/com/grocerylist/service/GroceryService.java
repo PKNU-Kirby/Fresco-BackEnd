@@ -2,6 +2,7 @@ package fresco.com.grocerylist.service;
 
 import fresco.com.grocerylist.domain.Grocery;
 import fresco.com.grocerylist.repository.GroceryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GroceryService {
     private final GroceryRepository groceryRepository;
 
@@ -23,17 +25,17 @@ public class GroceryService {
         return groceryRepository.findAll();
     }
 
-    public Grocery updatePurchased(Long id, boolean purchased){
+    public Grocery updatePurchased(Long id, Boolean purchased){
         Grocery item = groceryRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Item not found"));
-        item.setPurchased(purchased);
+        item.updatePurchased(purchased);
         return groceryRepository.save(item);
     }
 
     public Grocery updateName(Long id, String name){
         Grocery item = groceryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
-        item.setName(name);
+        item.updateName(name);
         return groceryRepository.save(item);
     }
 
