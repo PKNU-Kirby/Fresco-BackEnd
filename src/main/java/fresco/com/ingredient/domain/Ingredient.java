@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static jakarta.persistence.FetchType.*;
@@ -27,14 +28,26 @@ public class Ingredient extends BaseEntity {
     private Category category;
 
     String name;
-    Date expirationDate;
+    LocalDate expirationDate;
     Integer quantity;
 
-    public Ingredient(Refrigerator refrigerator, Category category, String name, Date expirationDate, Integer quantity) {
+    public Ingredient(Refrigerator refrigerator, Category category, String name, LocalDate expirationDate, Integer quantity) {
         this.refrigerator = refrigerator;
         this.category = category;
         this.name = name;
         this.expirationDate = expirationDate;
+        this.quantity = quantity;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public void updateQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }

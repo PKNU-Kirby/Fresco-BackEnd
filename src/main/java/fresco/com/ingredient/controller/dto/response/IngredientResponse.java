@@ -2,13 +2,14 @@ package fresco.com.ingredient.controller.dto.response;
 
 import fresco.com.ingredient.domain.Ingredient;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public record IngredientResponse(
         Long id,
         Long categoryId,
         String name,
-        Date expirationDate,
+        LocalDate expirationDate,
         Integer quantity
 ) {
     public static IngredientResponse from(Ingredient ingredient){
