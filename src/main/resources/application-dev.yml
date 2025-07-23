@@ -4,8 +4,8 @@ spring:
       client:
         registration:
           kakao:
-            client-id: ${kakao.client.id}
-            client-secret: ${kakao.client.secret}
+            client-id: ${KAKAO.CLIENT.ID}
+            client-secret: ${KAKAO.CLIENT.SECRET}
             redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
@@ -14,8 +14,8 @@ spring:
               - account_email
 
           naver:
-            client-id: ${naver.client.id}
-            client-secret: ${naver.client.secret}
+            client-id: ${NAVER.CLIENT.ID}
+            client-secret: ${NAVER.CLIENT.SECRET}
             redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_basic
@@ -40,3 +40,8 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+
+
+  config:
+    import:
+      - optional:aws-parameterstore:/
