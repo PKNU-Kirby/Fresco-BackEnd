@@ -45,3 +45,8 @@ spring:
   config:
     import:
       - optional:aws-parameterstore:/
+
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2

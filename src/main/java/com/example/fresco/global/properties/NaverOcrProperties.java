@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Getter
 public class NaverOcrProperties {
 
-    @Value("${naver.ocr.url}")
+    @Value("${NAVER.OCR.URL}")
     private String ocr_url;
 
-    @Value("${naver.ocr.api-key}")
+    @Value("${NAVER.OCR.API-KEY}")
     private String ocr_api_key;
 }
