@@ -1,10 +1,7 @@
 package fresco.com.grocerylist.domain;
 
-import jakarta.annotation.Resource;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import fresco.com.global.domain.BaseEntity;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -12,14 +9,26 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Grocery {
+@Table(name = "groceryItem")
+public class GroceryItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "groceryList_id")
+    private GroceryList groceryList;
+
+    private Integer quantity;
+
     private String name;
 
     private Boolean purchased;
+
+    public GroceryItem(String name, Boolean purchased) {
+        this.name = name;
+        this.purchased = purchased;
+    }
 
     public void updateName(String newName) {
         this.name = newName;

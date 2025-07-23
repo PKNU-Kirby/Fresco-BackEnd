@@ -1,6 +1,8 @@
 package fresco.com.grocerylist.controller;
 
-import fresco.com.grocerylist.domain.Grocery;
+import fresco.com.global.response.SuccessResponse;
+import fresco.com.global.response.success.GrocerySuccessCode;
+import fresco.com.grocerylist.domain.GroceryItem;
 import fresco.com.grocerylist.dto.GroceryDto;
 import fresco.com.grocerylist.dto.NameUpdateDto;
 import fresco.com.grocerylist.dto.PurchasedUpdateDto;
@@ -21,22 +23,23 @@ public class GroceryController {
     private final GroceryService groceryService;
 
     @PostMapping
-    public Grocery addItem(@RequestBody GroceryDto dto) {
-        return groceryService.addItem(dto.name());
+    public SuccessResponse<GroceryDto> addItem(@RequestBody GroceryDto dto) {
+        return SuccessResponse.of(GrocerySuccessCode.GROCERY_SUCCESS,
+                groceryService.addItem(dto.name()));
     }
 
     @GetMapping
-    public List<Grocery> getItems() {
+    public List<GroceryItem> getItems() {
         return groceryService.getAllItems();
     }
 
     @PatchMapping("/{id}/purchased")
-    public Grocery togglePurchased(@PathVariable Long id, @RequestBody PurchasedUpdateDto dto) {
+    public GroceryItem togglePurchased(@PathVariable Long id, @RequestBody PurchasedUpdateDto dto) {
         return groceryService.updatePurchased(id,dto.purchased());
     }
 
     @PatchMapping("/{id}/name")
-    public Grocery updateName(@PathVariable Long id, @RequestBody NameUpdateDto dto) {
+    public GroceryItem updateName(@PathVariable Long id, @RequestBody NameUpdateDto dto) {
         return groceryService.updateName(id, dto.name());
     }
 
