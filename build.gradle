@@ -73,7 +73,8 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
 
 	//PARAMETER_STORE_STARTER
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store:3.0.3'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.4'
 }
 
 tasks.withType(Test).configureEach {
