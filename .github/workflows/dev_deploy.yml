@@ -5,6 +5,14 @@ on:
     types: [closed]
   workflow_dispatch:
 
+env:
+  APP_NAME : fresco
+  BUILD_NAME : fresco
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,25 +28,6 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-        shell: bash
-
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test
-        shell: bash
-
-      - name: Verify build artifacts
-        run: |
-          echo "Built JAR files:"
-          ls -la build/libs/
-          if [ ! -f build/libs/*.jar ]; then
-            echo "No JAR files found!"
-            exit 1
-          fi
-          echo "JAR file size:"
-          du -h build/libs/*.jar
-
       - name: Get current time
         uses: josStorer/get-current-time@v2
         id: current-time
@@ -50,43 +39,49 @@ jobs:
         run: echo "CurrentTime=${{ steps.current-time.outputs.formattedTime }}"
         shell: bash
 
-      - name: Generate deployment package
+      # 설정 파일 추가
+      - name: application-secret.yml 구성
         run: |
-          mkdir -p deploy
-          # 특정 JAR 파일만 복사 (프로젝트명에 맞게 수정 필요)
-          cp build/libs/fresco-0.0.1-SNAPSHOT.jar deploy/application.jar
-          cp Procfile deploy/Procfile
-          cp -r .ebextensions-dev deploy/.ebextensions
-          cp -r .platform deploy/.platform
-          
-          # 배포 패키지 확인
-          echo "Deployment package contents:"
-          ls -la deploy/
-          echo "Application JAR size:"
-          du -h deploy/application.jar
-          
-          cd deploy && zip -r deploy.zip .
+          cd ./src/main/resources
+          touch ./application-secret.yml
+          echo "${{ secrets.APPLICATION_SECRET }}" > ./application-secret.yml
 
-      - name: Verify deployment package
+      - name: gradlew 실행 권한 부여
+        run: chmod +x gradlew
+
+      - name: Gradle 빌드
+        run: ./gradlew build -x test
+
+      - name: Docker 이미지 파일 PUSH
         run: |
-          echo "Deployment zip contents:"
-          unzip -l deploy/deploy.zip
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build --platform linux/arm64/v8 -t app .
+          docker tag app ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
 
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v20
+      - name: AWS 배포
+        uses: appleboy/ssh-action@master
         with:
-          aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
-          application_name: fresco-dev
-          environment_name: fresco-dev-env
-          version_label: fresco-${{ github.sha }}-${{ steps.current-time.outputs.formattedTime }}
-          region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
-          wait_for_deployment: true  # 중요: 배포 완료까지 대기
-          wait_for_environment_recovery: 300  # 5분 대기
-
-      - name: Verify deployment
-        if: success()
-        run: |
-          echo "Deployment completed successfully"
-          echo "Version: fresco-${{ github.sha }}-${{ steps.current-time.outputs.formattedTime }}"
+          host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
+          username: ec2-user
+          key: ${{ secrets.PRIVATE_KEY }} # pem 키
+          # 도커 작업
+          script: |
+            # 최신 fresco 이미지 pull
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
+            
+            # 기존 fresco 컨테이너 중지 및 삭제
+            sudo docker stop fresco || true
+            sudo docker rm fresco || true
+            
+            # 새 fresco 컨테이너 실행
+            sudo docker run -v /home/ec2-user/elk/logs:/logs -d --log-driver=syslog -p 80:8080 --name fresco --network fresco-network -e TZ=Asia/Seoul ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }}:latest
+            
+            # fresco 관련 종료된 컨테이너 삭제
+            sudo docker container prune -f
+            
+            # 사용하지 않는 fresco 이미지만 삭제 (최신 버전 제외)
+            sudo docker image prune -f
+            
+            # 이전 버전의 fresco 이미지 삭제
+            sudo docker images ${{ secrets.DOCKER_USERNAME }}/${{ env.APP_NAME }} -q | awk 'NR>1' | xargs -r sudo docker rmi -f
