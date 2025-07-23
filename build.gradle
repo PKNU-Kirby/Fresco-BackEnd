@@ -67,8 +67,7 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
 }
 
-tasks.named('test') {
-	outputs.dir snippetsDir
+tasks.withType(Test).configureEach {
 	useJUnitPlatform()
 }
 
