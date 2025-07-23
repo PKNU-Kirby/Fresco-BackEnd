@@ -60,7 +60,7 @@ jobs:
         uses: appleboy/ssh-action@v1  # 수정: 안정된 버전 태그 사용
         with:
           host: ${{ secrets.HOST }}
-          username: ec2-user
+          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             set -e
