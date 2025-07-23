@@ -9,15 +9,14 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Component
 public class JwtProperties {
-    @Value("${JWT.SECRET_KEY}")
+    @Value("${jwt.secret_key}")
     private String secretKey;
 
-    @Value("${JWT.ACCESS_TOKEN.VALID_TIME}")
+    @Value("${jwt.access_token.valid_time}")
     private Long accessTokenValidTime;
 
-    @Value("${JWT.REFRESH_TOKEN.VALID_TIME}")
+    @Value("${jwt.refresh_token.valid_time}")
     private Long refreshTokenValidTime;
-
 
     public byte[] getBytesSecretKey() {
         return secretKey.getBytes(StandardCharsets.UTF_8);
