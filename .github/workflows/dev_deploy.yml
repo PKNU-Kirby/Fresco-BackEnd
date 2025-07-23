@@ -1,0 +1,92 @@
+name: fresco dev CI/CD
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && ( github.event.pull_request.base.ref == 'dev' ||  github.event.pull_request.base.ref == 'main' )
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+        shell: bash
+
+      - name: Verify build artifacts
+        run: |
+          echo "Built JAR files:"
+          ls -la build/libs/
+          if [ ! -f build/libs/*.jar ]; then
+            echo "No JAR files found!"
+            exit 1
+          fi
+          echo "JAR file size:"
+          du -h build/libs/*.jar
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss
+          utcOffset: "+09:00"
+
+      - name: Show Current Time
+        run: echo "CurrentTime=${{ steps.current-time.outputs.formattedTime }}"
+        shell: bash
+
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          # 특정 JAR 파일만 복사 (프로젝트명에 맞게 수정 필요)
+          cp build/libs/fresco-0.0.1-SNAPSHOT.jar deploy/application.jar
+          cp Procfile deploy/Procfile
+          cp -r .ebextensions-dev deploy/.ebextensions
+          cp -r .platform deploy/.platform
+          
+          # 배포 패키지 확인
+          echo "Deployment package contents:"
+          ls -la deploy/
+          echo "Application JAR size:"
+          du -h deploy/application.jar
+          
+          cd deploy && zip -r deploy.zip .
+
+      - name: Verify deployment package
+        run: |
+          echo "Deployment zip contents:"
+          unzip -l deploy/deploy.zip
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
+          application_name: fresco-dev
+          environment_name: fresco-dev-env
+          version_label: fresco-${{ github.sha }}-${{ steps.current-time.outputs.formattedTime }}
+          region: ap-northeast-2
+          deployment_package: deploy/deploy.zip
+          wait_for_deployment: true  # 중요: 배포 완료까지 대기
+          wait_for_environment_recovery: 300  # 5분 대기
+
+      - name: Verify deployment
+        if: success()
+        run: |
+          echo "Deployment completed successfully"
+          echo "Version: fresco-${{ github.sha }}-${{ steps.current-time.outputs.formattedTime }}"
