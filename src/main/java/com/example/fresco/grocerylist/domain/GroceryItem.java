@@ -16,7 +16,7 @@ public class GroceryItem extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "groceryList_id")
+    @JoinColumn(name = "groceryListId")
     private GroceryList groceryList;
 
     private Integer quantity;

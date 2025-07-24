@@ -1,10 +1,8 @@
 package com.example.fresco.refrigerator.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.fresco.grocerylist.domain.GroceryList;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +22,15 @@ public class Refrigerator extends BaseEntity {
 
     public void changeName(String name) {
         this.name = name;
+    }
+
+    @OneToOne(mappedBy = "refrigerator", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private GroceryList groceryList;
+
+    public void setGroceryList(GroceryList groceryList) {
+        this.groceryList = groceryList;
+        if (groceryList.getRefrigerator() != this) {
+            groceryList.setRefrigerator(this);
+        }
     }
 }

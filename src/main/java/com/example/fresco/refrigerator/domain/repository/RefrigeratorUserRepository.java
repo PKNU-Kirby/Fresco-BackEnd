@@ -17,7 +17,7 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
     void deleteByRefrigeratorId(Long refrigeratorId);
 
 
-    @Query("select new com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse(r.id, r.name) " +
+    @Query("select new com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse(r.id, r.name, r.groceryList.id) " +
             "from RefrigeratorUser ru join ru.refrigerator r " +
             "where ru.user.id = :userId")
     List<RefrigeratorInfoResponse> findAllByUserId(Long userId);

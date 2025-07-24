@@ -3,6 +3,7 @@ package com.example.fresco.refrigerator.service;
 import com.example.fresco.global.exception.RestApiException;
 import com.example.fresco.global.response.error.AuthErrorCode;
 import com.example.fresco.global.response.error.RefrigeratorErrorCode;
+import com.example.fresco.grocerylist.domain.GroceryList;
 import com.example.fresco.refrigerator.controller.dto.request.*;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.domain.Refrigerator;
@@ -30,12 +31,19 @@ public class RefrigeratorService {
     @Transactional
     public RefrigeratorInfoResponse createRefrigerator(@Valid CreateRefrigeratorRequest request) {
         Refrigerator refrigerator = new Refrigerator(request.name());
+
+        GroceryList groceryList = GroceryList.builder()
+                .refrigerator(refrigerator)
+                .totalAmount(0)
+                .build();
+        refrigerator.setGroceryList(groceryList);
+
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
 
         Refrigerator savedRefrigerator = refrigeratorRepository.save(refrigerator);
         refrigeratorUserRepository.save(new RefrigeratorUser(refrigerator, user));
-        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName());
+        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName(), savedRefrigerator.getGroceryList().getId());
     }
 
     @Transactional
@@ -52,7 +60,7 @@ public class RefrigeratorService {
 
         refrigerator.changeName(request.name());
         Refrigerator savedRefrigerator = refrigeratorRepository.save(refrigerator);
-        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName());
+        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName(), savedRefrigerator.getGroceryList().getId());
     }
 
     @Transactional(readOnly = true)
