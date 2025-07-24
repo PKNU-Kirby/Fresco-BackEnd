@@ -2,14 +2,16 @@ package com.example.fresco.grocerylist.controller;
 
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.GrocerySuccessCode;
-import com.example.fresco.grocerylist.domain.GroceryItem;
-import com.example.fresco.grocerylist.dto.*;
+import com.example.fresco.grocerylist.dto.request.GroceryItemDtoRequest;
+import com.example.fresco.grocerylist.dto.request.GroceryItemUpdateDtoRequest;
+import com.example.fresco.grocerylist.dto.response.GroceryListDtoResponse;
 import com.example.fresco.grocerylist.service.GroceryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,25 +27,24 @@ public class GroceryController {
         return SuccessResponse.of(GrocerySuccessCode.GROCERY_ADD_SUCCESS, saved);
     }
 
-    @GetMapping("/{id}")
-    public SuccessResponse<GroceryListDtoResponse> getList(@PathVariable("id") Long id) {
+    @GetMapping("/{groceryListId}")
+    public SuccessResponse<GroceryListDtoResponse> getList(@PathVariable("groceryListId") Long id) {
         return SuccessResponse.of(GrocerySuccessCode.GROCERY_LIST_SUCCESS,
                 groceryService.getListWithItems(id)
         );
     }
 
-//    @PatchMapping("/{id}/purchased")
-//    public GroceryItem togglePurchased(@PathVariable Long id, @RequestBody PurchasedUpdateDto dto) {
-//        return groceryService.updatePurchased(id,dto.purchased());
-//    }
-//
-//    @PatchMapping("/{id}/name")
-//    public GroceryItem updateName(@PathVariable Long id, @RequestBody NameUpdateDto dto) {
-//        return groceryService.updateName(id, dto.name());
-//    }
+    @PatchMapping("/{groceryListId}/update")
+    public SuccessResponse<GroceryListDtoResponse> updateItems(
+            @PathVariable Long groceryListId,
+            @RequestBody List<GroceryItemUpdateDtoRequest> dtos
+    ) {
+        GroceryListDtoResponse updatedList = groceryService.updateItems(groceryListId, dtos);
+        return SuccessResponse.of(GrocerySuccessCode.GROCERY_UPDATE_SUCCESS, updatedList);
+    }
 
-    @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Map<String, String>> deleteItem(@PathVariable Long id) {
+    @DeleteMapping("/{groceryListId}/delete")
+    public ResponseEntity<Map<String, String>> deleteItem(@PathVariable("groceryListId") Long id) {
 
         groceryService.deleteItem(id);
         Map<String, String> response = new HashMap<>();

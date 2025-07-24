@@ -1,15 +1,15 @@
-package com.example.fresco.grocerylist.dto;
+package com.example.fresco.grocerylist.dto.response;
 
 import com.example.fresco.grocerylist.domain.GroceryItem;
 
-public record GroceryItemDto(
+public record GroceryItemDtoResponse(
         Long id,
         String name,
         Integer quantity,
         Boolean purchased
 ){
-    static public GroceryItemDto itemDto(GroceryItem item) {
-        return new GroceryItemDto(
+    static public GroceryItemDtoResponse itemDto(GroceryItem item) {
+        return new GroceryItemDtoResponse(
                 item.getId(),
                 item.getName(),
                 item.getQuantity(),

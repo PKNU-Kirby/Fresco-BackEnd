@@ -1,4 +1,4 @@
-package com.example.fresco.grocerylist.dto;
+package com.example.fresco.grocerylist.dto.request;
 
 import com.example.fresco.grocerylist.domain.GroceryItem;
 

@@ -37,4 +37,8 @@ public class GroceryItem extends BaseEntity {
     public void updatePurchased(Boolean newPurchased) {
         this.purchased = newPurchased;
     }
+
+    public void updateQuantity(Integer newQuantity) {
+        this.quantity = newQuantity;
+    }
 }
