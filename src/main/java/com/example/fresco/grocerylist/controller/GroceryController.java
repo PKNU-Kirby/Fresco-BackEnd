@@ -2,17 +2,15 @@ package com.example.fresco.grocerylist.controller;
 
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.GrocerySuccessCode;
+import com.example.fresco.grocerylist.dto.request.GroceryItemDeleteDtoRequest;
 import com.example.fresco.grocerylist.dto.request.GroceryItemDtoRequest;
 import com.example.fresco.grocerylist.dto.request.GroceryItemUpdateDtoRequest;
 import com.example.fresco.grocerylist.dto.response.GroceryListDtoResponse;
 import com.example.fresco.grocerylist.service.GroceryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/grocery")
@@ -37,21 +35,19 @@ public class GroceryController {
     @PatchMapping("/{groceryListId}/update")
     public SuccessResponse<GroceryListDtoResponse> updateItems(
             @PathVariable Long groceryListId,
-            @RequestBody List<GroceryItemUpdateDtoRequest> dtos
+            @RequestBody List<GroceryItemUpdateDtoRequest> items
     ) {
-        GroceryListDtoResponse updatedList = groceryService.updateItems(groceryListId, dtos);
+        GroceryListDtoResponse updatedList = groceryService.updateItems(groceryListId, items);
         return SuccessResponse.of(GrocerySuccessCode.GROCERY_UPDATE_SUCCESS, updatedList);
     }
 
     @DeleteMapping("/{groceryListId}/delete")
-    public ResponseEntity<Map<String, String>> deleteItem(@PathVariable("groceryListId") Long id) {
-
-        groceryService.deleteItem(id);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "삭제 완료");
-
-        return ResponseEntity.ok(response);
-
+    public SuccessResponse<GroceryListDtoResponse> deleteItems(
+            @PathVariable Long groceryListId,
+            @RequestBody GroceryItemDeleteDtoRequest request
+    ) {
+        GroceryListDtoResponse updatedList = groceryService.deleteItems(groceryListId, request);
+        return SuccessResponse.of(GrocerySuccessCode.GROCERY_DELETE_SUCCESS, updatedList);
     }
 }
 

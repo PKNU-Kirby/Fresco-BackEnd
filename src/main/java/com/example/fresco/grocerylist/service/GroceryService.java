@@ -2,9 +2,9 @@ package com.example.fresco.grocerylist.service;
 
 import com.example.fresco.grocerylist.domain.GroceryItem;
 import com.example.fresco.grocerylist.domain.GroceryList;
+import com.example.fresco.grocerylist.dto.request.GroceryItemDeleteDtoRequest;
 import com.example.fresco.grocerylist.dto.request.GroceryItemDtoRequest;
 import com.example.fresco.grocerylist.dto.request.GroceryItemUpdateDtoRequest;
-import com.example.fresco.grocerylist.dto.response.GroceryItemDtoResponse;
 import com.example.fresco.grocerylist.dto.response.GroceryListDtoResponse;
 import com.example.fresco.grocerylist.repository.GroceryListRepository;
 import com.example.fresco.grocerylist.repository.GroceryRepository;
@@ -59,7 +59,13 @@ public class GroceryService {
         return GroceryListDtoResponse.from(list.getId(), list.getItems());
     }
 
-    public void deleteItem(Long id){
-        groceryListRepository.deleteById(id);
+    public GroceryListDtoResponse deleteItems(Long groceryListId, GroceryItemDeleteDtoRequest itemIds) {
+        for (Long itemId : itemIds.itemIds()) {
+            groceryRepository.deleteById(itemId);
+        }
+        GroceryList list = groceryListRepository.findWithItemsById(groceryListId)
+                .orElseThrow(() -> new RuntimeException("리스트를 찾을 수 없습니다."));
+
+        return GroceryListDtoResponse.from(list.getId(), list.getItems());
     }
 }

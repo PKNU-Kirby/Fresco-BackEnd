@@ -3,5 +3,5 @@ package com.example.fresco.grocerylist.dto.request;
 import java.util.List;
 
 public record GroceryItemDeleteDtoRequest(
-        List<GroceryItemUpdateDtoRequest> updateItems
+        List<Long> itemIds
 ) {}
