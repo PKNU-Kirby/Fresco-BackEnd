@@ -1,0 +1,27 @@
+services:
+  # 메인 백엔드 애플리케이션
+  backend:
+    image: taeyoungkims/fresco:latest
+    container_name: backend
+    ports:
+      - "80:8080"
+    volumes:
+      - logs:/app/logs
+      - ./src:/app/src
+
+    environment:
+      # 기본 설정
+      - TZ=Asia/Seoul
+      - spring.profiles.active=dev
+
+    restart: unless-stopped
+    networks:
+      - fresco-network
+
+volumes:
+  logs:
+    driver: local
+
+networks:
+  fresco-network:
+    driver: bridge

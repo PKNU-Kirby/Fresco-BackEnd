@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_provider_id",
+                columnNames = {"provider", "providerId"}))
 public class User extends BaseEntity {
 
     @Id
@@ -19,9 +22,15 @@ public class User extends BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Provider provider;
+
+    @Column(nullable = false)
     private String providerId;
+
+    @Column(length = 20)
     private String name;
+
     private String fcmToken;
 
     @Builder
