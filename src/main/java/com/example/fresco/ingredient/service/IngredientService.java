@@ -5,32 +5,30 @@ import com.example.fresco.global.response.error.IngredientErrorCode;
 import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientConditionCommand;
 import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
-import com.example.fresco.ingredient.domain.Ingredient;
-import com.example.fresco.ingredient.domain.repository.IngredientRepository;
+import com.example.fresco.ingredient.controller.dto.response.PageInfo;
+import com.example.fresco.ingredient.controller.dto.response.PageResponse;
 import com.example.fresco.ingredient.service.util.UpdateIngredientConditionManager;
+import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
+import com.example.fresco.refrigerator.domain.repository.RefrigeratorIngredientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class IngredientService {
-    private final IngredientRepository ingredientRepository;
+    private final RefrigeratorIngredientRepository refrigeratorIngredientRepository;
     private final UpdateIngredientConditionManager updateIngredientConditionManager;
 
     @Transactional(readOnly = true)
-    public List<IngredientResponse> getIngredients(Long refrigeratorId, IngredientFilterRequest filter) {
+    public PageResponse<IngredientResponse> getIngredients(Long refrigeratorId, IngredientFilterRequest filter) {
         Sort sortType = getSortType(filter);
         PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getSize(), sortType);
-        return ingredientRepository.findByRefrigeratorIdAndCategoryIdIn(refrigeratorId, filter.getCategoryIds(), pageRequest)
-                .stream()
-                .map(ingredient -> IngredientResponse.from(ingredient))
-                .collect(Collectors.toList());
+        Page<IngredientResponse> page = refrigeratorIngredientRepository.findByRefrigeratorIdAndCategoryIdIn(refrigeratorId, filter.getCategoryIds(), pageRequest);
+        return new PageResponse<>(page.getContent(), PageInfo.getPageInfo(page));
     }
 
     private Sort getSortType(IngredientFilterRequest filter) {
@@ -42,11 +40,11 @@ public class IngredientService {
 
     @Transactional
     public IngredientResponse updateIngredient(UpdateIngredientConditionCommand updateIngredientConditionCommand) {
-        Ingredient ingredient = ingredientRepository.findById(updateIngredientConditionCommand.id())
+        RefrigeratorIngredient refrigeratorIngredient = refrigeratorIngredientRepository.findById(updateIngredientConditionCommand.refrigeratorIngredientId())
                 .orElseThrow(() -> new RestApiException(IngredientErrorCode.NULL_INGREDIENT));
 
-        updateIngredientConditionManager.updateContract(ingredient, updateIngredientConditionCommand);
-        Ingredient savedIngredient = ingredientRepository.save(ingredient);
+        updateIngredientConditionManager.updateContract(refrigeratorIngredient, updateIngredientConditionCommand);
+        RefrigeratorIngredient savedIngredient = refrigeratorIngredientRepository.save(refrigeratorIngredient);
         return IngredientResponse.from(savedIngredient);
     }
 }

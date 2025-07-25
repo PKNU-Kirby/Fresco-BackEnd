@@ -1,18 +1,17 @@
 package com.example.fresco.ingredient.controller.dto.response;
 
-import com.example.fresco.ingredient.domain.Ingredient;
+import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public record IngredientResponse(
-        Long id,
+        Long ingredientId,
         Long categoryId,
         String name,
         LocalDate expirationDate,
         Integer quantity
 ) {
-    public static IngredientResponse from(Ingredient ingredient) {
+    public static IngredientResponse from(RefrigeratorIngredient ingredient) {
         return new IngredientResponse(
                 ingredient.getId(),
                 ingredient.getCategory().getId(),

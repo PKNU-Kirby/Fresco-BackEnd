@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
-    @EntityGraph(attributePaths = {"category"})
-    List<Ingredient> findByRefrigeratorIdAndCategoryIdIn(Long refrigeratorId, List<Long> categoryIds, Pageable pageable);
 }

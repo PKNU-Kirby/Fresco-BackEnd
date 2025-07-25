@@ -38,4 +38,15 @@ public class RefrigeratorIngredient extends BaseEntity {
 
     private Integer quantity = 0;
 
+    public void updateExpirationDate(LocalDate expirationDate){
+        this.expirationDate = expirationDate;
+    }
+
+    public void updateName(String name){
+        this.name = name;
+    }
+
+    public void updateQuantity(Integer quantity){
+        this.quantity = quantity;
+    }
 }
