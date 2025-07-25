@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public record UpdateIngredientConditionCommand(
         @NonNull
-        Long id,
+        Long refrigeratorIngredientId,
         String name,
         LocalDate expirationDate,
         Integer quantity

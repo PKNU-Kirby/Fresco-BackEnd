@@ -1,5 +1,6 @@
 package com.example.fresco.refrigerator.domain.repository;
 
+import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorGroupMemberResponse;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.domain.RefrigeratorUser;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,11 +17,17 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
     @Query("delete from RefrigeratorUser ru where ru.refrigerator.id = :refrigeratorId")
     void deleteByRefrigeratorId(Long refrigeratorId);
 
-
     @Query("select new com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse(r.id, r.name) " +
             "from RefrigeratorUser ru join ru.refrigerator r " +
-            "where ru.user.id = :userId")
-    List<RefrigeratorInfoResponse> findAllByUserId(Long userId);
+            "where ru.user.id = :userId " +
+            "order by r.createdDate asc")
+    List<RefrigeratorInfoResponse> findAllRefrigeratorsByUserId(Long userId);
 
     Optional<RefrigeratorUser> findByRefrigeratorIdAndUserId(Long refrigeratorId, Long userId);
+
+    @Query("select new com.example.fresco.refrigerator.controller.dto.response.RefrigeratorGroupMemberResponse(u.id, u.name) " +
+            "from RefrigeratorUser ru join ru.user u " +
+            "where ru.refrigerator.id = :refrigeratorId " +
+            "order by ru.createdDate asc")
+    List<RefrigeratorGroupMemberResponse> findAllUsersByRefrigeratorId(Long refrigeratorId);
 }

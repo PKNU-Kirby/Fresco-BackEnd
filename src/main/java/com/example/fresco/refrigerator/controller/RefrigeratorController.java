@@ -3,6 +3,7 @@ package com.example.fresco.refrigerator.controller;
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.RefrigeratorSuccessCode;
 import com.example.fresco.refrigerator.controller.dto.request.*;
+import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorGroupMemberResponse;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.service.RefrigeratorService;
 import jakarta.validation.Valid;
@@ -29,7 +30,8 @@ public class RefrigeratorController {
 
     @DeleteMapping("/{refrigeratorId}")
     public SuccessResponse<String> deleteRefrigerator(
-            @PathVariable Long refrigeratorId) {
+            @PathVariable Long refrigeratorId
+    ) {
         return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_DELETE_SUCCESS,
                 refrigeratorService.deleteRefrigerator(new DeleteRefrigeratorRequest(refrigeratorId)));
     }
@@ -50,8 +52,17 @@ public class RefrigeratorController {
                 refrigeratorService.getAllRefrigerator(new GetAllRefrigeratorRequest(userId)));
     }
 
+    @GetMapping("/{refrigeratorId}")
+    public SuccessResponse<List<RefrigeratorGroupMemberResponse>> getRefrigerator(
+            @NotNull @PathVariable Long refrigeratorId
+    ) {
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
+                refrigeratorService.getAllRefrigeratorGroupMember(new RefrigeratorIdRequest(refrigeratorId)));
+    }
+
+
     @PostMapping("/{refrigeratorId}/user")
-    public SuccessResponse<List<RefrigeratorInfoResponse>> addUserToRefrigerator(
+    public SuccessResponse<RefrigeratorInfoResponse> addUserToRefrigerator(
             @AuthenticationPrincipal Long userId,
             @NotNull @PathVariable Long refrigeratorId
     ) {
@@ -60,7 +71,7 @@ public class RefrigeratorController {
     }
 
     @DeleteMapping("/{refrigeratorId}/user")
-    public SuccessResponse<List<RefrigeratorInfoResponse>> deleteUserToRefrigerator(
+    public SuccessResponse<String> deleteUserToRefrigerator(
             @AuthenticationPrincipal Long userId,
             @NotNull @PathVariable Long refrigeratorId
     ) {

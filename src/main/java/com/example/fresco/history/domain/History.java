@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "history")
 @NoArgsConstructor
 @Getter
-public class History  extends BaseEntity {
+public class History extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

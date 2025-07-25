@@ -1,14 +1,10 @@
 package com.example.fresco.ingredient.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
-import com.example.fresco.refrigerator.domain.Refrigerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.Date;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -43,5 +39,4 @@ public class Ingredient extends BaseEntity {
     public void updateDefaultUseByPeriod(Integer defaultUseByPeriod) {
         this.defaultUseByPeriod = defaultUseByPeriod;
     }
-
 }
