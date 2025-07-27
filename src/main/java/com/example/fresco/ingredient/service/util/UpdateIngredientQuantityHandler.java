@@ -8,9 +8,11 @@ import java.util.Objects;
 
 @Service
 class UpdateIngredientQuantityHandler implements UpdateIngredientConditionHandler {
+
     @Override
     public void update(RefrigeratorIngredient refrigeratorIngredient, UpdateIngredientConditionCommand updateContractConditionCommand) {
         final Integer quantity = updateContractConditionCommand.quantity();
+
         if (Objects.nonNull(quantity)) {
             refrigeratorIngredient.updateQuantity(quantity);
         }
