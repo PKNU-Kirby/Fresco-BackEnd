@@ -2,8 +2,7 @@ package com.example.fresco.refrigerator.controller;
 
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.RefrigeratorSuccessCode;
-import com.example.fresco.refrigerator.controller.dto.request.*;
-import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorGroupMemberResponse;
+import com.example.fresco.refrigerator.controller.dto.request.refrigerator.*;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.service.RefrigeratorService;
 import jakarta.validation.Valid;
@@ -50,32 +49,5 @@ public class RefrigeratorController {
     ) {
         return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
                 refrigeratorService.getAllRefrigerator(new GetAllRefrigeratorRequest(userId)));
-    }
-
-    @GetMapping("/{refrigeratorId}")
-    public SuccessResponse<List<RefrigeratorGroupMemberResponse>> getRefrigerator(
-            @NotNull @PathVariable Long refrigeratorId
-    ) {
-        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
-                refrigeratorService.getAllRefrigeratorGroupMember(new RefrigeratorIdRequest(refrigeratorId)));
-    }
-
-
-    @PostMapping("/{refrigeratorId}/user")
-    public SuccessResponse<RefrigeratorInfoResponse> addUserToRefrigerator(
-            @AuthenticationPrincipal Long userId,
-            @NotNull @PathVariable Long refrigeratorId
-    ) {
-        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
-                refrigeratorService.addUserToRefrigerator(new RefrigeratorUserRequest(userId, refrigeratorId)));
-    }
-
-    @DeleteMapping("/{refrigeratorId}/user")
-    public SuccessResponse<String> deleteUserToRefrigerator(
-            @AuthenticationPrincipal Long userId,
-            @NotNull @PathVariable Long refrigeratorId
-    ) {
-        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
-                refrigeratorService.deleteUserToRefrigerator(new RefrigeratorUserRequest(userId, refrigeratorId)));
     }
 }

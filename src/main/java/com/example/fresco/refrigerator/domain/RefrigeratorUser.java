@@ -1,5 +1,6 @@
 package com.example.fresco.refrigerator.domain;
 
+import com.example.fresco.auth.domain.Provider;
 import com.example.fresco.global.domain.BaseEntity;
 import com.example.fresco.user.domain.User;
 import jakarta.persistence.*;

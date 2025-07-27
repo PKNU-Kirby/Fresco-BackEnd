@@ -1,4 +1,4 @@
-package com.example.fresco.refrigerator.controller.dto.request;
+package com.example.fresco.refrigerator.controller.dto.request.refrigeratorUser;
 
 import jakarta.validation.constraints.NotNull;
 
