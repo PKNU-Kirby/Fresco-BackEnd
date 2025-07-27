@@ -1,4 +1,4 @@
-package com.example.fresco.ingredient.controller.dto.response;
+package com.example.fresco.global.response.paging;
 
 import java.util.List;
 

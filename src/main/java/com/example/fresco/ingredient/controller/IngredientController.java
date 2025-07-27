@@ -5,9 +5,10 @@ import com.example.fresco.global.response.success.IngredientSuccessCode;
 import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientInfoRequest;
 import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
-import com.example.fresco.ingredient.controller.dto.response.PageResponse;
+import com.example.fresco.global.response.paging.PageResponse;
 import com.example.fresco.ingredient.service.IngredientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,9 +29,10 @@ public class IngredientController {
     @PutMapping("/{refrigeratorIngredientId}")
     public SuccessResponse<IngredientResponse> updateIngredient(
             @PathVariable Long refrigeratorIngredientId,
-            @RequestBody UpdateIngredientInfoRequest updateIngredientInfoRequest
+            @RequestBody UpdateIngredientInfoRequest updateIngredientInfoRequest,
+            @AuthenticationPrincipal Long userId
     ) {
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_UPDATE_SUCCESS,
-                ingredientService.updateIngredient(updateIngredientInfoRequest.toCommand(refrigeratorIngredientId)));
+                ingredientService.updateIngredient(updateIngredientInfoRequest.toCommand(userId, refrigeratorIngredientId)));
     }
 }
