@@ -3,6 +3,8 @@ package com.example.fresco.refrigerator.service;
 import com.example.fresco.global.exception.RestApiException;
 import com.example.fresco.global.response.error.AuthErrorCode;
 import com.example.fresco.global.response.error.RefrigeratorErrorCode;
+import com.example.fresco.grocerylist.domain.GroceryList;
+import com.example.fresco.grocerylist.domain.repository.GroceryListRepository;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.RefrigeratorIdRequest;
 import com.example.fresco.refrigerator.controller.dto.request.refrigeratorUser.RefrigeratorUserRequest;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorGroupMemberResponse;
@@ -24,6 +26,7 @@ import java.util.List;
 public class RefrigeratorUserService {
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
+    private final GroceryListRepository groceryListRepository;
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
@@ -35,12 +38,12 @@ public class RefrigeratorUserService {
     public RefrigeratorInfoResponse approveRefrigeratorInvitation(RefrigeratorUserRequest request) {
         Refrigerator refrigerator = refrigeratorRepository.findById(request.refrigeratorId())
                 .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
-
+        GroceryList groceryList = groceryListRepository.findByRefrigerator(refrigerator);
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
 
         refrigeratorUserRepository.save(new RefrigeratorUser(refrigerator, user));
-        return new RefrigeratorInfoResponse(refrigerator.getId(), refrigerator.getName());
+        return new RefrigeratorInfoResponse(refrigerator.getId(), refrigerator.getName(), groceryList.getId());
     }
 
     @Transactional

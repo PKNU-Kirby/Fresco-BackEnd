@@ -3,17 +3,15 @@ package com.example.fresco.refrigerator.service;
 import com.example.fresco.global.exception.RestApiException;
 import com.example.fresco.global.response.error.AuthErrorCode;
 import com.example.fresco.global.response.error.RefrigeratorErrorCode;
-import com.example.fresco.global.response.error.RefrigeratorUserErrorCode;
+import com.example.fresco.grocerylist.domain.GroceryList;
+import com.example.fresco.grocerylist.domain.repository.GroceryListRepository;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.CreateRefrigeratorRequest;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.DeleteRefrigeratorRequest;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.GetAllRefrigeratorRequest;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.UpdateRefrigeratorRequest;
-import com.example.fresco.refrigerator.controller.dto.request.refrigeratorUser.RefrigeratorUserIdRequest;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
-import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInvitationResponse;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.RefrigeratorUser;
-import com.example.fresco.refrigerator.domain.repository.RefrigeratorInvitationRepository;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorRepository;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorUserRepository;
 import com.example.fresco.user.domain.User;
@@ -33,17 +31,18 @@ public class RefrigeratorService {
     private final UserRepository userRepository;
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
-    private final RefrigeratorInvitationRepository refrigeratorInvitationRepository;
+    private final GroceryListRepository groceryListRepository;
 
     @Transactional
     public RefrigeratorInfoResponse createRefrigerator(@Valid CreateRefrigeratorRequest request) {
         Refrigerator refrigerator = new Refrigerator(request.name());
+        GroceryList savedGroceryList = saveGroceryList(refrigerator);
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
 
         Refrigerator savedRefrigerator = refrigeratorRepository.save(refrigerator);
         refrigeratorUserRepository.save(new RefrigeratorUser(refrigerator, user));
-        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName());
+        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName(), savedGroceryList.getId());
     }
 
     @Transactional
@@ -57,10 +56,10 @@ public class RefrigeratorService {
     public RefrigeratorInfoResponse updateRefrigerator(@Valid UpdateRefrigeratorRequest request) {
         Refrigerator refrigerator = refrigeratorRepository.findById(request.refrigeratorId())
                 .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
-
+        GroceryList groceryList = groceryListRepository.findByRefrigerator(refrigerator);
         refrigerator.changeName(request.name());
-        Refrigerator savedRefrigerator = refrigeratorRepository.save(refrigerator);
-        return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName());
+
+        return new RefrigeratorInfoResponse(refrigerator.getId(), refrigerator.getName(), groceryList.getId());
     }
 
     @Transactional(readOnly = true)
@@ -68,9 +67,17 @@ public class RefrigeratorService {
         return refrigeratorUserRepository.findAllRefrigeratorsByUserId(request.userId());
     }
 
-    @Transactional(readOnly = true)
-    public RefrigeratorInvitationResponse getInvitationInfo(RefrigeratorUserIdRequest request) {
-        return refrigeratorInvitationRepository.findInvitationInfoById(request.refrigeratorInvitationId())
-                .orElseThrow(() -> new RestApiException(RefrigeratorUserErrorCode.NULL_REFRIGERATOR_USER));
+    /**
+     * dirty checking이 아닌 saved를 호출한 이유
+     *
+     * 이 메서드를 사용할 때는 냉장고를 처음 생성할 때이므로, 더티 체킹을 할 수 없다.
+     * 그러므로, 명시적으로 save를 사용하여 저장하여야 한다.
+     */
+    private GroceryList saveGroceryList(Refrigerator refrigerator) {
+        GroceryList groceryList = GroceryList.builder()
+                .refrigerator(refrigerator)
+                .totalAmount(0)
+                .build();
+        return groceryListRepository.save(groceryList);
     }
 }
