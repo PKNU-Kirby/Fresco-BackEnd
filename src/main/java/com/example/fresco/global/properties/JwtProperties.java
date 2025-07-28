@@ -18,7 +18,6 @@ public class JwtProperties {
     @Value("${jwt.refresh_token.valid_time}")
     private Long refreshTokenValidTime;
 
-
     public byte[] getBytesSecretKey() {
         return secretKey.getBytes(StandardCharsets.UTF_8);
     }

@@ -7,9 +7,10 @@ public record UpdateIngredientInfoRequest(
         LocalDate expirationDate,
         Integer quantity
 ) {
-    public UpdateIngredientConditionCommand toCommand(Long ingredientId) {
+    public UpdateIngredientConditionCommand toCommand(Long userId, Long refrigeratorIngredientId) {
         return new UpdateIngredientConditionCommand(
-                ingredientId,
+                userId,
+                refrigeratorIngredientId,
                 name,
                 expirationDate,
                 quantity

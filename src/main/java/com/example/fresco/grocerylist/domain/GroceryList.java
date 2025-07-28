@@ -14,8 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "groceryList")
 public class GroceryList extends BaseEntity {
     @Id
@@ -28,14 +26,9 @@ public class GroceryList extends BaseEntity {
 
     private Integer totalAmount;
 
-    @OneToMany(mappedBy = "groceryList", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GroceryItem> items = new ArrayList<>();
-
-    public void setRefrigerator(Refrigerator refrigerator) {
+    @Builder
+    public GroceryList(Refrigerator refrigerator, Integer totalAmount) {
         this.refrigerator = refrigerator;
-        if (refrigerator.getGroceryList() != this) {
-            refrigerator.setGroceryList(this);
-        }
+        this.totalAmount = totalAmount;
     }
-
 }

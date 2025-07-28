@@ -1,6 +1,5 @@
 package com.example.fresco.global.response.error;
 
-import com.example.fresco.global.response.error.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

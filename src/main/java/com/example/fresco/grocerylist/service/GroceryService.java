@@ -1,13 +1,15 @@
 package com.example.fresco.grocerylist.service;
 
+import com.example.fresco.global.exception.RestApiException;
+import com.example.fresco.global.response.error.GroceryListErrorCode;
 import com.example.fresco.grocerylist.domain.GroceryItem;
 import com.example.fresco.grocerylist.domain.GroceryList;
-import com.example.fresco.grocerylist.dto.request.GroceryItemDeleteDtoRequest;
-import com.example.fresco.grocerylist.dto.request.GroceryItemDtoRequest;
-import com.example.fresco.grocerylist.dto.request.GroceryItemUpdateDtoRequest;
-import com.example.fresco.grocerylist.dto.response.GroceryListDtoResponse;
-import com.example.fresco.grocerylist.repository.GroceryListRepository;
-import com.example.fresco.grocerylist.repository.GroceryRepository;
+import com.example.fresco.grocerylist.controller.dto.request.GroceryItemDeleteDtoRequest;
+import com.example.fresco.grocerylist.controller.dto.request.GroceryItemDtoRequest;
+import com.example.fresco.grocerylist.controller.dto.request.GroceryItemUpdateDtoRequest;
+import com.example.fresco.grocerylist.controller.dto.response.GroceryListDtoResponse;
+import com.example.fresco.grocerylist.domain.repository.GroceryListRepository;
+import com.example.fresco.grocerylist.domain.repository.GroceryItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,14 +19,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class GroceryService {
     private final GroceryListRepository groceryListRepository;
-    private final GroceryRepository groceryRepository;
+    private final GroceryItemRepository groceryItemRepository;
 
+    @Transactional
     public GroceryItemDtoRequest addItem(GroceryItemDtoRequest dto) {
         GroceryList list = groceryListRepository.findById(dto.groceryListId())
-                .orElseThrow(() -> new RuntimeException("해당 장보기 리스트가 존재하지 않습니다."));
+                .orElseThrow(() -> new RestApiException(GroceryListErrorCode.NULL_GROCERYLIST));
 
         GroceryItem item = GroceryItem.builder()
                 .name(dto.name())
@@ -33,19 +35,20 @@ public class GroceryService {
                 .groceryList(list)
                 .build();
 
-        GroceryItem saved = groceryRepository.save(item);
+        GroceryItem saved = groceryItemRepository.save(item);
         return GroceryItemDtoRequest.from(saved);
     }
 
-    public GroceryListDtoResponse getListWithItems(Long listId) {
-        GroceryList list = groceryListRepository.findWithItemsById(listId)
-                .orElseThrow(() -> new RuntimeException("리스트를 찾을 수 없습니다."));
-        return GroceryListDtoResponse.from(list.getId(), list.getItems());
+    @Transactional(readOnly = true)
+    public GroceryListDtoResponse getListWithItems(Long groceryListId) {
+        List<GroceryItem> itemList = groceryItemRepository.findAllByGroceryListId(groceryListId);
+        return GroceryListDtoResponse.from(groceryListId, itemList);
     }
 
-    public GroceryListDtoResponse updateItems(Long listId, List<GroceryItemUpdateDtoRequest> dtos) {
+    @Transactional
+    public GroceryListDtoResponse updateItems(Long groceryListId, List<GroceryItemUpdateDtoRequest> dtos) {
         for (GroceryItemUpdateDtoRequest dto : dtos) {
-            GroceryItem item = groceryRepository.findById(dto.id())
+            GroceryItem item = groceryItemRepository.findById(dto.id())
                     .orElseThrow(() -> new EntityNotFoundException("Item not found: " + dto.id()));
 
             if (dto.name() != null) item.updateName(dto.name());
@@ -53,19 +56,16 @@ public class GroceryService {
             if (dto.purchased() != null) item.updatePurchased(dto.purchased());
         }
 
-        GroceryList list = groceryListRepository.findWithItemsById(listId)
-                .orElseThrow(() -> new RuntimeException("리스트를 찾을 수 없습니다."));
+        List<GroceryItem> itemList = groceryItemRepository.findAllByGroceryListId(groceryListId);
 
-        return GroceryListDtoResponse.from(list.getId(), list.getItems());
+        return GroceryListDtoResponse.from(groceryListId, itemList);
     }
 
+    @Transactional
     public GroceryListDtoResponse deleteItems(Long groceryListId, GroceryItemDeleteDtoRequest itemIds) {
-        for (Long itemId : itemIds.itemIds()) {
-            groceryRepository.deleteById(itemId);
-        }
-        GroceryList list = groceryListRepository.findWithItemsById(groceryListId)
-                .orElseThrow(() -> new RuntimeException("리스트를 찾을 수 없습니다."));
+        groceryItemRepository.deleteAllById(itemIds.itemIds());
 
-        return GroceryListDtoResponse.from(list.getId(), list.getItems());
+        List<GroceryItem> itemList = groceryItemRepository.findAllByGroceryListId(groceryListId);
+        return GroceryListDtoResponse.from(groceryListId, itemList);
     }
 }
