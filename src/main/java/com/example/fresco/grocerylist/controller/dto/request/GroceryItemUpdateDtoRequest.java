@@ -1,4 +1,4 @@
-package com.example.fresco.grocerylist.dto.request;
+package com.example.fresco.grocerylist.controller.dto.request;
 
 
 public record GroceryItemUpdateDtoRequest(

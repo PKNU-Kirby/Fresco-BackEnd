@@ -2,10 +2,10 @@ package com.example.fresco.grocerylist.controller;
 
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.GrocerySuccessCode;
-import com.example.fresco.grocerylist.dto.request.GroceryItemDeleteDtoRequest;
-import com.example.fresco.grocerylist.dto.request.GroceryItemDtoRequest;
-import com.example.fresco.grocerylist.dto.request.GroceryItemUpdateDtoRequest;
-import com.example.fresco.grocerylist.dto.response.GroceryListDtoResponse;
+import com.example.fresco.grocerylist.controller.dto.request.GroceryItemDeleteDtoRequest;
+import com.example.fresco.grocerylist.controller.dto.request.GroceryItemDtoRequest;
+import com.example.fresco.grocerylist.controller.dto.request.GroceryItemUpdateDtoRequest;
+import com.example.fresco.grocerylist.controller.dto.response.GroceryListDtoResponse;
 import com.example.fresco.grocerylist.service.GroceryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
