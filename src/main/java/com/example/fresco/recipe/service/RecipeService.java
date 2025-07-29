@@ -1,7 +1,7 @@
-package fresco.com.recipe.service;
+package com.example.fresco.recipe.service;
 
-import fresco.com.recipe.dto.OpenAiRequest;
-import fresco.com.recipe.dto.OpenAiResponse;
+import com.example.fresco.recipe.dto.OpenAiRequest;
+import com.example.fresco.recipe.dto.OpenAiResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

@@ -7,8 +7,6 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "groceryItem")
 public class GroceryItem extends BaseEntity {
     @Id
@@ -25,7 +23,10 @@ public class GroceryItem extends BaseEntity {
 
     private Boolean purchased;
 
-    public GroceryItem(String name, Boolean purchased) {
+    @Builder
+    public GroceryItem(GroceryList groceryList, Integer quantity, String name, Boolean purchased) {
+        this.groceryList = groceryList;
+        this.quantity = quantity;
         this.name = name;
         this.purchased = purchased;
     }

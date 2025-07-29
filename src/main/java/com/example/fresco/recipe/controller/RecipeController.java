@@ -1,6 +1,6 @@
-package fresco.com.recipe.controller;
+package com.example.fresco.recipe.controller;
 
-import fresco.com.recipe.service.RecipeService;
+import com.example.fresco.recipe.service.RecipeService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

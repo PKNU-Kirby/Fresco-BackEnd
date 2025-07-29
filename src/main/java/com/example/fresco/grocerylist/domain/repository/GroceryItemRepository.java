@@ -8,7 +8,6 @@ import java.util.List;
 
 @Repository
 public interface GroceryItemRepository extends JpaRepository<GroceryItem, Long> {
-
     List<GroceryItem> findAllByGroceryListId(Long groceryListId);
 }
 

@@ -26,7 +26,7 @@ public class GroceryService {
     @Transactional
     public GroceryItemDtoRequest addItem(GroceryItemDtoRequest dto) {
         GroceryList list = groceryListRepository.findById(dto.groceryListId())
-                .orElseThrow(() -> new RestApiException(GroceryListErrorCode.NULL_GROCERYLIST));
+                .orElseThrow(() -> new RestApiException(GroceryListErrorCode.NULL_GROCERY_LIST));
 
         GroceryItem item = GroceryItem.builder()
                 .name(dto.name())
@@ -57,7 +57,6 @@ public class GroceryService {
         }
 
         List<GroceryItem> itemList = groceryItemRepository.findAllByGroceryListId(groceryListId);
-
         return GroceryListDtoResponse.from(groceryListId, itemList);
     }
 

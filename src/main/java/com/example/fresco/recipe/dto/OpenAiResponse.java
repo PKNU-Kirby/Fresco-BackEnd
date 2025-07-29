@@ -1,4 +1,4 @@
-package fresco.com.recipe.dto;
+package com.example.fresco.recipe.dto;
 
 import java.util.List;
 
