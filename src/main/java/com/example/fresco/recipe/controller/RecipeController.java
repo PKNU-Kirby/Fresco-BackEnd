@@ -19,10 +19,4 @@ public class RecipeController {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_RECOMMEND_SUCCESS,
                 recipeService.generateRecipe(prompt));
     }
-
-    @PostMapping("/save")
-    public SuccessResponse<String> saveRecipe(@RequestBody SaveRecipeRequest request) {
-        recipeService.saveRecipe(request);
-        return SuccessResponse.of(RecipeSuccessCode.RECIPE_SAVE_SUCCESS);
-    }
 }
