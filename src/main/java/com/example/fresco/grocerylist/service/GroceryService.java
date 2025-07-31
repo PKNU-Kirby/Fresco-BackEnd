@@ -49,7 +49,7 @@ public class GroceryService {
     public GroceryListDtoResponse updateItems(Long groceryListId, List<GroceryItemUpdateDtoRequest> dtos) {
         for (GroceryItemUpdateDtoRequest dto : dtos) {
             GroceryItem item = groceryItemRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Item not found: " + dto.id()));
+                    .orElseThrow(() -> new RestApiException(GroceryListErrorCode.ITEM_NOT_FOUND));
 
             if (dto.name() != null) item.updateName(dto.name());
             if (dto.quantity() != null) item.updateQuantity(dto.quantity());
