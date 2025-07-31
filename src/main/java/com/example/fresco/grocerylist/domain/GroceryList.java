@@ -25,4 +25,10 @@ public class GroceryList extends BaseEntity {
     private Refrigerator refrigerator;
 
     private Integer totalAmount;
+
+    @Builder
+    public GroceryList(Integer totalAmount, Refrigerator refrigerator) {
+        this.totalAmount = totalAmount;
+        this.refrigerator = refrigerator;
+    }
 }

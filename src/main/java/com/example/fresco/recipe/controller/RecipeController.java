@@ -1,22 +1,28 @@
 package com.example.fresco.recipe.controller;
 
+import com.example.fresco.global.response.SuccessResponse;
+import com.example.fresco.global.response.success.RecipeSuccessCode;
+import com.example.fresco.recipe.controller.dto.OpenAiResponse;
 import com.example.fresco.recipe.service.RecipeService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/recipe")
 public class RecipeController {
-    private final RecipeService openAiService;
 
-    public RecipeController(RecipeService openAiService) {
-        this.openAiService = openAiService;
+    private final RecipeService recipeService;
+
+    @PostMapping
+    public SuccessResponse<OpenAiResponse> getRecipe(@RequestBody String prompt) {
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_RECOMMEND_SUCCESS,
+                recipeService.generateRecipe(prompt));
     }
 
-    @GetMapping("/chat")
-    public String chat(@RequestParam String prompt) {
-        return openAiService.chat(prompt);
+    @PostMapping("/save")
+    public SuccessResponse<String> saveRecipe(@RequestBody SaveRecipeRequest request) {
+        recipeService.saveRecipe(request);
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_SAVE_SUCCESS);
     }
 }
