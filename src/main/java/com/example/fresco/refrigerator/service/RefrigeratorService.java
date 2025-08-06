@@ -69,7 +69,7 @@ public class RefrigeratorService {
 
     /**
      * dirty checking이 아닌 saved를 호출한 이유
-     *
+     * <p>
      * 이 메서드를 사용할 때는 냉장고를 처음 생성할 때이므로, 더티 체킹을 할 수 없다.
      * 그러므로, 명시적으로 save를 사용하여 저장하여야 한다.
      */

@@ -1,6 +1,7 @@
 package com.example.fresco.refrigerator.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
+import com.example.fresco.ingredient.controller.dto.request.CreateIngredientsRequest;
 import com.example.fresco.ingredient.domain.Category;
 import com.example.fresco.ingredient.domain.Ingredient;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "refrigeratorIngredient")
@@ -48,5 +50,12 @@ public class RefrigeratorIngredient extends BaseEntity {
 
     public void updateQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public static List<RefrigeratorIngredient> from(Refrigerator refrigerator, List<CreateIngredientsRequest> requests) {
+        return requests.stream()
+                .map(request -> {
+                    new RefrigeratorIngredient();
+                })
     }
 }

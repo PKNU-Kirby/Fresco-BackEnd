@@ -1,8 +1,6 @@
 package com.example.fresco.history.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
-import com.example.fresco.ingredient.domain.Ingredient;
-import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
 import com.example.fresco.user.domain.User;
 import jakarta.persistence.*;
