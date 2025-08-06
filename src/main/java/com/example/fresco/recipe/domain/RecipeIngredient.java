@@ -3,6 +3,7 @@ package com.example.fresco.recipe.domain;
 import com.example.fresco.global.domain.BaseEntity;
 import com.example.fresco.ingredient.domain.Ingredient;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,12 @@ public class RecipeIngredient extends BaseEntity {
 
     private Integer quantity;
     private String instead;
+
+    @Builder
+    public RecipeIngredient(Recipe recipe, Ingredient ingredient, Integer quantity, String instead) {
+        this.recipe = recipe;
+        this.ingredient = ingredient;
+        this.quantity = quantity;
+        this.instead = instead;
+    }
 }

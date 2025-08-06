@@ -4,8 +4,12 @@ import com.example.fresco.global.domain.BaseEntity;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "recipe")
@@ -25,16 +29,23 @@ public class Recipe extends BaseEntity {
     @JoinColumn(name = "refrigeratorId", nullable = false)
     private Refrigerator refrigerator;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "recipeIngredientId")
+    private List<RecipeIngredient> ingredients = new ArrayList<>();
+
     @Column(nullable = false)
     private String title;
 
     @Lob
-    private String description;
+    private String steps;
 
-    public Recipe(User user, Refrigerator refrigerator, String title, String description) {
+    private String url;
+
+    @Builder
+    public Recipe(User user, String title, String steps, String url) {
         this.user = user;
-        this.refrigerator = refrigerator;
         this.title = title;
-        this.description = description;
+        this.steps = steps;
+        this.url = url;
     }
 }

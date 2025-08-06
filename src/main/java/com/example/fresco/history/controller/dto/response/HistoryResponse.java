@@ -2,7 +2,6 @@ package com.example.fresco.history.controller.dto.response;
 
 import com.example.fresco.history.domain.History;
 import lombok.Builder;
-import org.apache.tomcat.util.http.parser.Host;
 
 import java.time.LocalDateTime;
 

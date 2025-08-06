@@ -34,18 +34,18 @@ public class User extends BaseEntity {
     private String fcmToken;
 
     @Builder
-    public User(Provider provider, String providerId, String name, String fcmToken) {
+    public User(Provider provider, String providerId, String userName, String fcmToken) {
         this.provider = provider;
         this.providerId = providerId;
-        this.name = name;
+        this.name = userName;
         this.fcmToken = fcmToken;
     }
 
-    public static User of(Provider provider, String providerId, String name) {
+    public static User of(Provider provider, String providerId, String userName) {
         return User.builder()
                 .provider(provider)
                 .providerId(providerId)
-                .name(name)
+                .userName(userName)
                 .build();
     }
 }

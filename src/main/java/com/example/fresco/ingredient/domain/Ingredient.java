@@ -21,14 +21,14 @@ public class Ingredient extends BaseEntity {
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 150, unique = true)
     private String name;
 
     private Integer defaultUseByPeriod;
 
-    public Ingredient(Category category, String name, Integer defaultUseByPeriod) {
+    public Ingredient(Category category, String ingredientName, Integer defaultUseByPeriod) {
         this.category = category;
-        this.name = name;
+        this.name = ingredientName;
         this.defaultUseByPeriod = defaultUseByPeriod;
     }
 
