@@ -11,7 +11,6 @@ import com.example.fresco.recipe.controller.dto.response.OpenAiResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.domain.*;
 import com.example.fresco.recipe.util.OpenAIClient;
-import com.example.fresco.refrigerator.domain.repository.RefrigeratorRepository;
 import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,9 +28,7 @@ public class RecipeService {
     private final OpenAIClient openAIClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final UserRepository userRepository;
-    private final RefrigeratorRepository refrigeratorRepository;
     private final RecipeDetailRepository recipeDetailRepository;
-    private final RecipeIngredientRepository recipeIngredientRepository;
     private final IngredientRepository ingredientRepository;
 
     @Transactional
@@ -60,8 +57,17 @@ public class RecipeService {
 
         List<RecipeIngredient> recipeIngredients = new ArrayList<>();
         for (RecipeCreateRequest.RecipeIngredients ingredientDto : request.ingredients()) {
-            Ingredient ingredient = ingredientRepository.findByName(ingredientDto.ingredientName())
-                    .orElseThrow(() -> new RestApiException(IngredientErrorCode.NULL_INGREDIENT));
+            String ingredientName = ingredientDto.ingredientName() == null ? null : ingredientDto.ingredientName().trim();
+            if (ingredientName == null || ingredientName.isEmpty()) {
+                throw new RestApiException(IngredientErrorCode.NULL_INGREDIENT);
+            }
+            Ingredient ingredient = ingredientRepository.findByName(ingredientName)
+                    .orElseGet(() -> ingredientRepository.save(
+                            Ingredient.builder()
+                                    .ingredientName(ingredientName)
+                                    .build()
+                    ));
+
 
             RecipeIngredient recipeIngredient = RecipeIngredient.builder()
                     .recipe(recipe)

@@ -3,6 +3,7 @@ package com.example.fresco.ingredient.domain;
 import com.example.fresco.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +27,7 @@ public class Ingredient extends BaseEntity {
 
     private Integer defaultUseByPeriod;
 
+    @Builder
     public Ingredient(Category category, String ingredientName, Integer defaultUseByPeriod) {
         this.category = category;
         this.name = ingredientName;
