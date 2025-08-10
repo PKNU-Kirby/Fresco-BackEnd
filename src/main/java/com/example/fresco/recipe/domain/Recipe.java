@@ -48,4 +48,13 @@ public class Recipe extends BaseEntity {
         this.steps = steps;
         this.url = url;
     }
+    public void updateUrl(String url) {
+        this.url = url;
+    }
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+    public void updateSteps(String steps) {
+        this.steps = steps;
+    }
 }

@@ -1,4 +1,7 @@
 package com.example.fresco.recipe.controller.dto.response;
 
-public class RecipeListResponse {
-}
+public record RecipeListResponse (
+        Long recipeId,
+        String title,
+        boolean favorite
+){ }
