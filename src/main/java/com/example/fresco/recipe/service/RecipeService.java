@@ -143,4 +143,21 @@ public class RecipeService {
 
         return RecipeDetailResponse.from(recipeRepository.save(recipe));
     }
+
+    @Transactional
+    public List<RecipeListResponse> deleteRecipes(List<Long> recipeIds, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
+
+        List<Recipe> toDelete = recipeRepository.findAllById(recipeIds);
+
+        toDelete.removeIf(r -> r.getUser() == null || !r.getUser().getId().equals(user.getId()));
+
+        if (!toDelete.isEmpty()) {
+            recipeRepository.deleteAllInBatch(toDelete);
+        }
+
+        return getRecipeList(user.getId());
+    }
+
 }

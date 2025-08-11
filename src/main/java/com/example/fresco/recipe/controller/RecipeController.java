@@ -36,13 +36,15 @@ public class RecipeController {
     }
 
     @GetMapping("/detail/{recipeId}")
-    public SuccessResponse<RecipeDetailResponse> getRecipeDetail(@PathVariable Long recipeId) {
+    public SuccessResponse<RecipeDetailResponse> getRecipeDetail(
+            @PathVariable Long recipeId) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_GET_SUCCESS,
                 recipeService.getRecipeDetail(recipeId));
     }
 
     @GetMapping("/list/{userId}")
-    public SuccessResponse<List<RecipeListResponse>> getRecipeList(@PathVariable Long userId) {
+    public SuccessResponse<List<RecipeListResponse>> getRecipeList(
+            @PathVariable Long userId) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_GET_SUCCESS,
                 recipeService.getRecipeList(userId));
     }
@@ -55,5 +57,14 @@ public class RecipeController {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_UPDATE_SUCCESS,
                 recipeService.replaceRecipe(recipeId, request, userId));
     }
+
+    @DeleteMapping("/delete/{recipeId}")
+    public SuccessResponse<List<RecipeListResponse>> deleteRecipes(
+            @PathVariable List<Long> recipeId,
+            @AuthenticationPrincipal Long userId) {
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_DELETE_SUCCESS,
+        recipeService.deleteRecipes(recipeId, userId));
+    }
+
 
 }
