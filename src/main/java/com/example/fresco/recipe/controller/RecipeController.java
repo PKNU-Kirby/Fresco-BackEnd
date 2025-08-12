@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,6 +66,19 @@ public class RecipeController {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_DELETE_SUCCESS,
         recipeService.deleteRecipes(recipeId, userId));
     }
+
+    @PostMapping("/{recipeId}/toggle")
+    public SuccessResponse<Map<String, Object>> toggle(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long recipeId
+    ) {
+        boolean favorite = recipeService.favoriteToggle(userId, recipeId);
+        return SuccessResponse.of(
+                RecipeSuccessCode.RECIPE_FAVORITE_SUCCESS,
+                Map.of("recipeId", recipeId, "favorite", favorite)
+        );
+    }
+
 
 
 }

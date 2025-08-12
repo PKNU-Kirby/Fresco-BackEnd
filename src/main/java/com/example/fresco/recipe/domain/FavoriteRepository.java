@@ -1,20 +1,24 @@
 package com.example.fresco.recipe.domain;
 
-import com.example.fresco.user.domain.Favorite;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
-public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
+public interface FavoriteRepository extends JpaRepository<FavoritesRecipe, Long> {
+    boolean existsByUserIdAndRecipeId(Long userId, Long recipeId);
+    Optional<FavoritesRecipe> findByUserIdAndRecipeId(Long userId, Long recipeId);
+    @Modifying
+    void deleteByUserIdAndRecipeId(Long userId, Long recipeId);
+
     @Query("""
         select f.recipe.id
-        from Favorite f
+        from FavoritesRecipe f
         where f.user.id = :userId
-          and f.recipe.id in :recipeIds
     """)
-    Set<Long> findRecipeIdsByUserIdAndRecipeIds(@Param("userId") Long userId,
-                                                @Param("recipeIds") Collection<Long> recipeIds);
+    Set<Long> findAllRecipeIdsByUserId(@Param("userId") Long userId);
 }

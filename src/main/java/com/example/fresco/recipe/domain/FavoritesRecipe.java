@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "favorites")
 @NoArgsConstructor
 @Getter
-public class Favorites extends BaseEntity {
+public class FavoritesRecipe extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,11 @@ public class Favorites extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipeId", nullable = false)
     private Recipe recipe;
+
+    public static FavoritesRecipe of(User user, Recipe recipe) {
+        FavoritesRecipe f = new FavoritesRecipe();
+        f.user = user;
+        f.recipe = recipe;
+        return f;
+    }
 }

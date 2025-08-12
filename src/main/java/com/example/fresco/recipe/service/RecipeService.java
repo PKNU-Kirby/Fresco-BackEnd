@@ -18,9 +18,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -98,20 +98,25 @@ public class RecipeService {
 
     @Transactional
     public List<RecipeListResponse> getRecipeList(Long userId) {
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
-        List<Recipe> recipes = recipeRepository.findAll(Sort.by(Sort.Direction.DESC, "createDate"));
 
-        List<Long> recipeIds = recipes.stream().map(Recipe::getId).toList();
-        Set<Long> favoriteRecipeIds = favoriteRepository
-                .findRecipeIdsByUserIdAndRecipeIds(user.getId(), recipeIds);
+        List<Recipe> recipes = recipeRepository.findAll();
 
+        Set<Long> favoriteIds = favoriteRepository.findAllRecipeIdsByUserId(userId);
 
+        recipes.sort(
+                Comparator
+                        .comparing((Recipe r) -> !favoriteIds.contains(r.getId())) // false(즐겨찾기) 먼저
+                        .thenComparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
+        );
+
+        // DTO 변환
         return recipes.stream()
-                .map(recipe -> new RecipeListResponse(
-                        recipe.getId(),
-                        recipe.getTitle(),
-                        favoriteRecipeIds.contains(recipe.getId())
+                .map(r -> new RecipeListResponse(
+                        r.getId(),
+                        r.getTitle(),
+                        favoriteIds.contains(r.getId())
                 ))
                 .toList();
     }
@@ -159,5 +164,19 @@ public class RecipeService {
 
         return getRecipeList(user.getId());
     }
+
+    @Transactional
+    public boolean favoriteToggle(Long userId, Long recipeId) {
+        if (favoriteRepository.existsByUserIdAndRecipeId(userId, recipeId)) {
+            favoriteRepository.deleteByUserIdAndRecipeId(userId, recipeId);
+            return false;
+        }
+
+        User user = userRepository.getReferenceById(userId);
+        Recipe recipe = recipeRepository.getReferenceById(recipeId);
+        favoriteRepository.save(FavoritesRecipe.of(user, recipe));
+        return true;
+    }
+
 
 }
