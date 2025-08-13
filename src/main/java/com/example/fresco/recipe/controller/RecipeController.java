@@ -67,8 +67,8 @@ public class RecipeController {
         recipeService.deleteRecipes(recipeId, userId));
     }
 
-    @PostMapping("/{recipeId}/toggle")
-    public SuccessResponse<Map<String, Object>> toggle(
+    @PostMapping("/favorite/toggle/{recipeId}")
+    public SuccessResponse<Map<String, Object>> toggleFavorite(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long recipeId
     ) {
@@ -79,6 +79,25 @@ public class RecipeController {
         );
     }
 
+    @PostMapping("/share/toggle/{refrigeratorId}/{recipeId}")
+    public SuccessResponse<Map<String, Object>> toggleShare(
+            @PathVariable Long refrigeratorId,
+            @PathVariable Long recipeId
+    ) {
+        boolean shared = recipeService.ShareToggle(refrigeratorId, recipeId);
+        return SuccessResponse.of(
+                RecipeSuccessCode.RECIPE_SHARE_SUCCESS,
+                Map.of("refrigeratorId", refrigeratorId, "recipeId", recipeId, "shared", shared)
+        );
+    }
 
+    @GetMapping("/share/{refrigeratorId}")
+    public SuccessResponse<List<RecipeListResponse>> listShared(
+            @PathVariable Long refrigeratorId,
+            @AuthenticationPrincipal Long userId
+    ) {
+        List<RecipeListResponse> list = recipeService.listSharedRecipes(refrigeratorId, userId);
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_SHARE_LIST_SUCCESS, list);
+    }
 
 }

@@ -11,7 +11,12 @@ import com.example.fresco.recipe.controller.dto.response.OpenAiResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
 import com.example.fresco.recipe.domain.*;
+import com.example.fresco.recipe.domain.Repository.FavoriteRepository;
+import com.example.fresco.recipe.domain.Repository.RecipeRepository;
+import com.example.fresco.recipe.domain.Repository.ShareRepository;
 import com.example.fresco.recipe.util.OpenAIClient;
+import com.example.fresco.refrigerator.domain.Refrigerator;
+import com.example.fresco.refrigerator.domain.repository.RefrigeratorRepository;
 import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +39,8 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
     private final FavoriteRepository favoriteRepository;
+    private final ShareRepository shareRepository;
+    private final RefrigeratorRepository refrigeratorRepository;
 
     @Transactional
     public OpenAiResponse generateRecipe(String prompt) {
@@ -177,6 +184,37 @@ public class RecipeService {
         favoriteRepository.save(FavoritesRecipe.of(user, recipe));
         return true;
     }
+
+    @Transactional
+    public boolean ShareToggle(Long refrigeratorId, Long recipeId) {
+        if (shareRepository.existsByRefrigeratorIdAndRecipeId(refrigeratorId, recipeId)) {
+            shareRepository.deleteByRefrigeratorIdAndRecipeId(refrigeratorId, recipeId);
+            return false;
+        }
+        Refrigerator refrigerator = refrigeratorRepository.getReferenceById(refrigeratorId);
+        Recipe recipe = recipeRepository.getReferenceById(recipeId);
+
+        shareRepository.save(Share.of(refrigerator, recipe));
+        return true;
+    }
+
+    @Transactional
+    public List<RecipeListResponse> listSharedRecipes(Long refrigeratorId, Long userId) {
+        List<Recipe> recipes = shareRepository.findRecipesByRefrigeratorId(refrigeratorId);
+
+        Set<Long> favIds = (userId == null) ? Set.of()
+                : favoriteRepository.findAllRecipeIdsByUserId(userId);
+
+        recipes.sort(
+                Comparator.comparing((Recipe r) -> !favIds.contains(r.getId()))
+                        .thenComparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
+        );
+
+        return recipes.stream()
+                .map(r -> new RecipeListResponse(r.getId(), r.getTitle(), favIds.contains(r.getId())))
+                .toList();
+    }
+
 
 
 }
