@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notifications")
 @NoArgsConstructor
 @Getter
 public class Notification extends BaseEntity {
