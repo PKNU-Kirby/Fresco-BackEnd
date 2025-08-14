@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "history")
+@Table(name = "histories")
 @NoArgsConstructor
 @Getter
 public class History extends BaseEntity {

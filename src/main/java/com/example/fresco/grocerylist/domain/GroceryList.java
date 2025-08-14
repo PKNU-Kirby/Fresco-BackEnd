@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "groceryList")
+@Table(name = "groceryLists")
 public class GroceryList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
