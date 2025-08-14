@@ -1,4 +1,4 @@
-package com.example.fresco.receipt.controller.dto.response;
+package com.example.fresco.ingredient.controller.dto.response.ocr;
 
 import java.util.List;
 
