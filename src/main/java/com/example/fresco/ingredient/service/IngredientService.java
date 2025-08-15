@@ -10,18 +10,19 @@ import com.example.fresco.global.response.paging.PageResponse;
 import com.example.fresco.history.domain.History;
 import com.example.fresco.history.domain.repository.HistoryRepository;
 import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequest;
+import com.example.fresco.ingredient.controller.dto.request.SaveIngredientsRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientConditionCommand;
-import com.example.fresco.ingredient.controller.dto.request.CreateIngredientsRequest;
 import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
-import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchResponse;
-import com.example.fresco.ingredient.domain.CategoryCache;
-import com.example.fresco.ingredient.service.util.ocr.ReceiptApiClient;
-import com.example.fresco.ingredient.service.util.update.UpdateIngredientConditionManager;
-import com.example.fresco.ingredient.service.util.ocr.ImageUtils;
-import com.example.fresco.ingredient.service.util.ocr.NaverOcrClient;
-import com.example.fresco.ingredient.service.util.ocr.ReceiptOcrResponseParser;
+import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchListResponse;
 import com.example.fresco.ingredient.controller.dto.response.ocr.FoodPair;
 import com.example.fresco.ingredient.controller.dto.response.ocr.ReceiptResponse;
+import com.example.fresco.ingredient.domain.Ingredient;
+import com.example.fresco.ingredient.domain.repository.IngredientRepository;
+import com.example.fresco.ingredient.service.util.ocr.ImageUtils;
+import com.example.fresco.ingredient.service.util.ocr.NaverOcrClient;
+import com.example.fresco.ingredient.service.util.ocr.ReceiptApiClient;
+import com.example.fresco.ingredient.service.util.ocr.ReceiptOcrResponseParser;
+import com.example.fresco.ingredient.service.util.update.UpdateIngredientConditionManager;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorIngredientRepository;
@@ -36,13 +37,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class IngredientService {
     private final RefrigeratorIngredientRepository refrigeratorIngredientRepository;
+    private final IngredientRepository ingredientRepository;
     private final RefrigeratorRepository refrigeratorRepository;
     private final UserRepository userRepository;
     private final HistoryRepository historyRepository;
@@ -50,7 +55,6 @@ public class IngredientService {
     private final NaverOcrClient naverOcrClient;
     private final ReceiptOcrResponseParser receiptOcrResponseParser;
     private final ReceiptApiClient receiptClient;
-    private final CategoryCache categoryCache;
 
     @Transactional(readOnly = true)
     public PageResponse<IngredientResponse> getIngredients(Long refrigeratorId, IngredientFilterRequest filter) {
@@ -79,20 +83,34 @@ public class IngredientService {
     }
 
     @Transactional
-    public IngredientResponse createIngredient(Long refrigeratorId, CreateIngredientsRequest request) {
+    public List<IngredientResponse> saveIngredient(Long refrigeratorId, SaveIngredientsRequest request) {
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId).orElseThrow(
                 () -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
-        List<String> foodNames = request.ingredientsInfo().stream().map(CreateIngredientsRequest.CreateIngredientInfo::name).toList();
-        ReceiptMatchResponse receiptMatchResponse = receiptClient.sendReceipt(foodNames);
 
-        // 카테고리 id 구하기
-        Map<String, Long> categoryIds = categoryCache.getCategoryIds(receiptMatchResponse.getCategoryNames());
-        // 식재료 id 구하기
-        RefrigeratorIngredient.from(refrigerator, request.ingredientsInfo());
+        List<Long> ingredientIds = request.getIngredientIds();
+        List<Ingredient> allIngredients = ingredientRepository.findAllById(ingredientIds);
+
+        Map<Long, Ingredient> ingredientMap = allIngredients.stream()
+                .collect(Collectors.toMap(Ingredient::getId, Function.identity()));
+
+        List<RefrigeratorIngredient> refrigeratorIngredients = request.ingredientsInfo().stream()
+                .map(info -> {
+                    Ingredient ingredient = ingredientMap.get(info.ingredientId());
+                    return new RefrigeratorIngredient(
+                            refrigerator,
+                            ingredient,
+                            ingredient.getCategory(),
+                            info.expirationDate()
+                    );
+                })
+                .toList();
+
+        List<RefrigeratorIngredient> savedIngredients = refrigeratorIngredientRepository.saveAll(refrigeratorIngredients);
+        return IngredientResponse.getListFromRefrigeratorIngredients(savedIngredients);
     }
 
     @Transactional
-    public ReceiptMatchResponse registerFromReceipt(MultipartFile receiptImage) {
+    public ReceiptMatchListResponse registerFromReceipt(MultipartFile receiptImage) {
         ImageUtils.validateImageFile(receiptImage);
         String base64Image = ImageUtils.encodeToBase64(receiptImage);
 
@@ -100,8 +118,18 @@ public class IngredientService {
         List<FoodPair> foodPairs = receiptOcrResponseParser.parseReceiptResponse(receiptResponse);
         List<String> foodNames = foodPairs.stream().map(FoodPair::food).toList();
 
-        ReceiptMatchResponse receiptMatchResponse = receiptClient.sendReceipt(foodNames);
-        return receiptMatchResponse.defineQuantity(foodPairs);
+        ReceiptMatchListResponse receiptMatchList = receiptClient.sendReceipt(foodNames);
+        List<Long> ingredientIds = receiptMatchList.getIngredientIds();
+
+        List<Ingredient> allIngredients = ingredientRepository.findAllById(ingredientIds);
+
+        Map<Long, LocalDate> expirationDateMap = allIngredients.stream()
+                .collect(Collectors.toMap(
+                        Ingredient::getId,
+                        ingredient -> LocalDate.now().plusDays(ingredient.getDefaultUseByPeriod())
+                ));
+
+        return;
     }
 
 //    @Transactional

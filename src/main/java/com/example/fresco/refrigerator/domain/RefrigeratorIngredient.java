@@ -1,7 +1,7 @@
 package com.example.fresco.refrigerator.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
-import com.example.fresco.ingredient.controller.dto.request.CreateIngredientsRequest;
+import com.example.fresco.ingredient.controller.dto.request.SaveIngredientsRequest;
 import com.example.fresco.ingredient.domain.Category;
 import com.example.fresco.ingredient.domain.Ingredient;
 import jakarta.persistence.*;
@@ -33,29 +33,16 @@ public class RefrigeratorIngredient extends BaseEntity {
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
 
-    @Column(nullable = false, length = 150)
-    private String name;
-
     private LocalDate expirationDate;
 
-    private Integer quantity = 0;
-
-    public void updateExpirationDate(LocalDate expirationDate) {
+    public RefrigeratorIngredient(Refrigerator refrigerator, Ingredient ingredient, Category category, LocalDate expirationDate) {
+        this.refrigerator = refrigerator;
+        this.ingredient = ingredient;
+        this.category = category;
         this.expirationDate = expirationDate;
     }
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updateQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public static List<RefrigeratorIngredient> from(Refrigerator refrigerator, List<CreateIngredientsRequest> requests) {
-        return requests.stream()
-                .map(request -> {
-                    new RefrigeratorIngredient();
-                })
+    public void updateExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }

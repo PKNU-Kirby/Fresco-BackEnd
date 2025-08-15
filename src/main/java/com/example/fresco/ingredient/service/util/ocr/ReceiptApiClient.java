@@ -1,8 +1,6 @@
 package com.example.fresco.ingredient.service.util.ocr;
 
-import com.example.fresco.ingredient.controller.dto.response.IngredientMatchInfo;
-import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchResponse;
-import com.example.fresco.ingredient.controller.dto.response.ocr.FoodPair;
+import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchListResponse;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
-import java.net.URI;
 import java.util.List;
 
 @Component
@@ -40,7 +37,7 @@ public class ReceiptApiClient {
         }
     }
 
-    public ReceiptMatchResponse sendReceipt(List<String> foodNames) {
+    public ReceiptMatchListResponse sendReceipt(List<String> foodNames) {
         return web.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/search/");
@@ -50,9 +47,9 @@ public class ReceiptApiClient {
                     return uriBuilder.build();
                 })
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<IngredientMatchInfo>>() {
+                .bodyToMono(new ParameterizedTypeReference<List<ReceiptMatchListResponse.ReceiptMatchResponse>>() {
                 })
-                .map(ReceiptMatchResponse::new)
+                .map(ReceiptMatchListResponse::new)
                 .block();
     }
 }
