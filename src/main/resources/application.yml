@@ -45,3 +45,27 @@ spring:
     aws:
       region:
         static: ap-northeast-2
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/fresco?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1024
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.tool.schema: DEBUG
+    com.example.fresco: DEBUG

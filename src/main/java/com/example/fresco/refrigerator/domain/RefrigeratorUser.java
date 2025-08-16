@@ -1,6 +1,5 @@
 package com.example.fresco.refrigerator.domain;
 
-import com.example.fresco.auth.domain.Provider;
 import com.example.fresco.global.domain.BaseEntity;
 import com.example.fresco.user.domain.User;
 import jakarta.persistence.*;
@@ -13,7 +12,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "refrigeratorUsers",
+@Table(name = "refrigeratorusers",
         uniqueConstraints = @UniqueConstraint(
                 name = "unique_refrigerator_user",
                 columnNames = {"refrigeratorId", "userId"}))

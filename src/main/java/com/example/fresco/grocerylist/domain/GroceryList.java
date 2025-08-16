@@ -3,18 +3,14 @@ package com.example.fresco.grocerylist.domain;
 import com.example.fresco.global.domain.BaseEntity;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "groceryLists")
+@Table(name = "grocerylists")
 public class GroceryList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

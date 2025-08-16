@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "refrigeratorIngredients")
+@Table(name = "refrigeratoringredients")
 @NoArgsConstructor
 @Getter
 public class RefrigeratorIngredient extends BaseEntity {
@@ -31,22 +31,16 @@ public class RefrigeratorIngredient extends BaseEntity {
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
 
-    @Column(nullable = false, length = 150)
-    private String name;
-
     private LocalDate expirationDate;
 
-    private Integer quantity = 0;
-
-    public void updateExpirationDate(LocalDate expirationDate) {
+    public RefrigeratorIngredient(Refrigerator refrigerator, Ingredient ingredient, Category category, LocalDate expirationDate) {
+        this.refrigerator = refrigerator;
+        this.ingredient = ingredient;
+        this.category = category;
         this.expirationDate = expirationDate;
     }
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updateQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void updateExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }

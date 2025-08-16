@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "recipeIngredients")
+@Table(name = "recipeingredients")
 @NoArgsConstructor
 @Getter
 public class RecipeIngredient extends BaseEntity {
