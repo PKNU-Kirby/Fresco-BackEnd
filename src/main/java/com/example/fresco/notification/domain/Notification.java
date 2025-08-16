@@ -21,8 +21,7 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
     private Boolean isRead = false;

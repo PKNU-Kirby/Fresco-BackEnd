@@ -12,7 +12,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "refrigeratorUsers",
+@Table(name = "refrigeratorusers",
         uniqueConstraints = @UniqueConstraint(
                 name = "unique_refrigerator_user",
                 columnNames = {"refrigeratorId", "userId"}))

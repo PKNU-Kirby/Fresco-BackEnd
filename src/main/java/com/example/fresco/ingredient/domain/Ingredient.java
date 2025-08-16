@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -15,6 +16,7 @@ import static jakarta.persistence.FetchType.LAZY;
 public class Ingredient extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "SMALLINT")
     private Long id;
 
     @ManyToOne(fetch = LAZY)

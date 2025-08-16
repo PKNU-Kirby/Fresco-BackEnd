@@ -28,7 +28,7 @@ public class Recipe extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     public Recipe(User user, Refrigerator refrigerator, String title, String description) {

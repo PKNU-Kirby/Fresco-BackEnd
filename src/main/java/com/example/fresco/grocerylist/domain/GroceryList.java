@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "groceryLists")
+@Table(name = "grocerylists")
 public class GroceryList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

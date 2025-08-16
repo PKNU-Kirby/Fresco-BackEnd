@@ -7,10 +7,12 @@ import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequ
 import com.example.fresco.ingredient.controller.dto.request.SaveIngredientsRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientInfoRequest;
 import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
-import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchListResponse;
+import com.example.fresco.ingredient.controller.dto.response.ReceiptOcrMappingResponse;
 import com.example.fresco.ingredient.service.IngredientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("ap1/v1/ingredient")
 @RequiredArgsConstructor
+@Slf4j
 public class IngredientController {
     private final IngredientService ingredientService;
 
@@ -52,19 +55,22 @@ public class IngredientController {
     }
 
     // 영수증으로 등록
-    @PostMapping("/scan-receipt")
-    public SuccessResponse<ReceiptMatchListResponse> scanReceipt(
+    @PostMapping(value = "/scan-receipt", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public SuccessResponse<List<ReceiptOcrMappingResponse>> scanReceipt(
             @RequestPart("receipt") MultipartFile receiptImage) {
+        long startTime = System.currentTimeMillis();
+        log.info("시작 시간 : {}", startTime);
+        List<ReceiptOcrMappingResponse> result = ingredientService.registerFromReceipt(receiptImage);
+        long endTime = System.currentTimeMillis();
+        log.info("종료 시간 : {}", endTime);
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
-                ingredientService.registerFromReceipt(receiptImage));
+                result);
     }
 
     // 식재료 사진으로 등록
-//    @PostMapping("/scan-photo")
-//    public SuccessResponse<List<IngredientResponse>> scanPhoto(
-//            @RequestParam("ingredientImage") MultipartFile ingredientImage) {
-//
-//        List<IngredientResponse> ingredients = ingredientService.registerFromPhoto(refrigeratorId, ingredientImage);
-//        return SuccessResponse.of()
-//    }
+    @PostMapping(value  = "/scan-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public SuccessResponse<List<IngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
+        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
+                ingredientService.registerFromPhoto(ingredientImage));
+    }
 }

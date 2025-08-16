@@ -1,6 +1,9 @@
-package com.example.fresco.ingredient.service.util.ocr;
+package com.example.fresco.ingredient.service.util.dataClient;
 
-import com.example.fresco.ingredient.controller.dto.response.ocr.*;
+import com.example.fresco.ingredient.controller.dto.response.ocr.ImageResult;
+import com.example.fresco.ingredient.controller.dto.response.ocr.Item;
+import com.example.fresco.ingredient.controller.dto.response.ocr.ReceiptResponse;
+import com.example.fresco.ingredient.controller.dto.response.ocr.SubResult;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -12,7 +15,7 @@ import java.util.stream.Stream;
 @Component
 public class ReceiptOcrResponseParser {
 
-    public List<FoodPair> parseReceiptResponse(ReceiptResponse response) {
+    public List<String> parseReceiptResponse(ReceiptResponse response) {
         if (response == null || response.images() == null) {
             return Collections.emptyList();
         }
@@ -23,7 +26,7 @@ public class ReceiptOcrResponseParser {
                 .collect(Collectors.toList());
     }
 
-    private Stream<FoodPair> parseImageResult(ImageResult image) {
+    private Stream<String> parseImageResult(ImageResult image) {
         if (image.receipt() == null ||
                 image.receipt().result() == null ||
                 image.receipt().result().subResults() == null) {
@@ -35,24 +38,23 @@ public class ReceiptOcrResponseParser {
                 .flatMap(this::parseSubResult);
     }
 
-    private Stream<FoodPair> parseSubResult(SubResult subResult) {
+    private Stream<String> parseSubResult(SubResult subResult) {
         if (subResult.items() == null) {
             return Stream.empty();
         }
 
         return subResult.items().stream()
                 .filter(Objects::nonNull)
-                .map(this::createFoodPair)
+                .map(this::createProductName)
                 .filter(Objects::nonNull);
     }
 
-    private FoodPair createFoodPair(Item item) {
+    private String createProductName(Item item) {
         try {
             String name = item.name().text();
-            Integer count = Integer.parseInt(item.count().text());
 
-            if (isValidFoodInfo(name, count)) {
-                return new FoodPair(name, count);
+            if (isValidFoodInfo(name)) {
+                return name;
             }
             return null;
         } catch (Exception e) {
@@ -61,9 +63,8 @@ public class ReceiptOcrResponseParser {
         }
     }
 
-    private boolean isValidFoodInfo(String name, Integer count) {
-        return name != null && !name.trim().isEmpty() &&
-                count != null && count > 0;
+    private boolean isValidFoodInfo(String name) {
+        return name != null && !name.trim().isEmpty();
     }
 }
 

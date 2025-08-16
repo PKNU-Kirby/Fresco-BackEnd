@@ -18,6 +18,7 @@ import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
+@Slf4j
 public class RefrigeratorService {
     private final UserRepository userRepository;
     private final RefrigeratorRepository refrigeratorRepository;
@@ -35,13 +37,13 @@ public class RefrigeratorService {
 
     @Transactional
     public RefrigeratorInfoResponse createRefrigerator(@Valid CreateRefrigeratorRequest request) {
-        Refrigerator refrigerator = new Refrigerator(request.name());
-        GroceryList savedGroceryList = saveGroceryList(refrigerator);
+        Refrigerator savedRefrigerator = refrigeratorRepository.save(new Refrigerator(request.name()));
+        GroceryList savedGroceryList = saveGroceryList(savedRefrigerator);
+        log.info("userId : {}", request.userId());
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
 
-        Refrigerator savedRefrigerator = refrigeratorRepository.save(refrigerator);
-        refrigeratorUserRepository.save(new RefrigeratorUser(refrigerator, user));
+        refrigeratorUserRepository.save(new RefrigeratorUser(savedRefrigerator, user));
         return new RefrigeratorInfoResponse(savedRefrigerator.getId(), savedRefrigerator.getName(), savedGroceryList.getId());
     }
 
