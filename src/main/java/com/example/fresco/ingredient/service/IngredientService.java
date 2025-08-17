@@ -12,10 +12,7 @@ import com.example.fresco.history.domain.repository.HistoryRepository;
 import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequest;
 import com.example.fresco.ingredient.controller.dto.request.SaveIngredientsRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientConditionCommand;
-import com.example.fresco.ingredient.controller.dto.response.IngredientListResponse;
-import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
-import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchListResponse;
-import com.example.fresco.ingredient.controller.dto.response.ReceiptOcrMappingResponse;
+import com.example.fresco.ingredient.controller.dto.response.*;
 import com.example.fresco.ingredient.controller.dto.response.ocr.ReceiptResponse;
 import com.example.fresco.ingredient.domain.Ingredient;
 import com.example.fresco.ingredient.domain.repository.IngredientRepository;
@@ -32,6 +29,7 @@ import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -40,8 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,6 +46,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class IngredientService {
+    private static final int AUTO_COMPLETE_MAX_NUMBER = 3;
     private final RefrigeratorIngredientRepository refrigeratorIngredientRepository;
     private final IngredientRepository ingredientRepository;
     private final RefrigeratorRepository refrigeratorRepository;
@@ -161,6 +159,52 @@ public class IngredientService {
                 ));
 
         return IngredientListResponse.getIngredientResponseWithExpirationDate(ingredientImageListResponse.imageList(), expirationDateMap);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "ingredient-search", key = "#keyword")
+    public List<AutoCompleteSearchResponse> searchAutoComplete(String keyword) {
+        String cleanKeyword = keyword.trim();
+        return stepByStepSearch(cleanKeyword);
+    }
+
+    private List<AutoCompleteSearchResponse> stepByStepSearch(String keyword) {
+        List<AutoCompleteSearchResponse> results = new ArrayList<>();
+        Set<String> addedNames = new HashSet<>(); // 중복 방지
+
+        // 1순위: 정확한 시작 매치
+        List<AutoCompleteSearchResponse> exactStartMatches = ingredientRepository.findExactStartMatch(keyword);
+        addUniqueResults(results, exactStartMatches, addedNames, AUTO_COMPLETE_MAX_NUMBER);
+
+        // 2순위: 포함 매치
+        if (results.size() < 3) {
+            List<AutoCompleteSearchResponse> containsMatches = ingredientRepository.findContainsMatch(keyword);
+            addUniqueResults(results, containsMatches, addedNames, AUTO_COMPLETE_MAX_NUMBER - results.size());
+        }
+
+        // 3순위: ngram 매치
+        if (results.size() < 3) {
+            List<Object[]> similarMatches = ingredientRepository.findSimilarMatch(keyword);
+            List<AutoCompleteSearchResponse> ngramMatches = AutoCompleteSearchResponse.convertToAutoCompleteSearchResponse(similarMatches);
+            addUniqueResults(results, ngramMatches, addedNames, AUTO_COMPLETE_MAX_NUMBER - results.size());
+        }
+
+        return results;
+    }
+
+    private void addUniqueResults(List<AutoCompleteSearchResponse> results,
+                                  List<AutoCompleteSearchResponse> newResults,
+                                  Set<String> addedNames,
+                                  int maxAdd) {
+        int added = 0;
+        for (AutoCompleteSearchResponse result : newResults) {
+            if (added >= maxAdd) break;
+            if (!addedNames.contains(result.ingredientName())) {
+                results.add(result);
+                addedNames.add(result.ingredientName());
+                added++;
+            }
+        }
     }
 
     private void saveUsedHistory(UpdateIngredientConditionCommand command) {
