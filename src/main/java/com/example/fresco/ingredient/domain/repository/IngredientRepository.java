@@ -27,12 +27,12 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     // 3순위: ngram FULLTEXT 검색 (유사 매치)
     @Query(value =
-            "SELECT i.id, i.name, i.category.id, i.category.name " +
-                    "MATCH(name) AGAINST(?1 IN NATURAL LANGUAGE MODE) as score " +
-                    "FROM ingredients as i" +
-                    "join categories as c on i.category.id = c.id " +
-                    "WHERE MATCH(name) AGAINST(?1 IN NATURAL LANGUAGE MODE) " +
-                    "AND name NOT LIKE %?1% " + // 이미 LIKE로 찾은 것들 제외
+            "SELECT i.id, i.name, c.id, c.name, " +
+                    "MATCH(i.name) AGAINST(?1 IN NATURAL LANGUAGE MODE) as score " +
+                    "FROM ingredients as i " +
+                    "JOIN categories as c ON i.categoryId = c.id " +
+                    "WHERE MATCH(i.name) AGAINST(?1 IN NATURAL LANGUAGE MODE) " +
+                    "AND i.name NOT LIKE CONCAT('%', ?1, '%') " +
                     "ORDER BY score DESC",
             nativeQuery = true)
     List<Object[]> findSimilarMatch(String keyword);
