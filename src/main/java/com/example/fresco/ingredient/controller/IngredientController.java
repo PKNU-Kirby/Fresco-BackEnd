@@ -6,6 +6,7 @@ import com.example.fresco.global.response.success.IngredientSuccessCode;
 import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequest;
 import com.example.fresco.ingredient.controller.dto.request.SaveIngredientsRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientInfoRequest;
+import com.example.fresco.ingredient.controller.dto.response.AutoCompleteSearchResponse;
 import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
 import com.example.fresco.ingredient.controller.dto.response.ReceiptOcrMappingResponse;
 import com.example.fresco.ingredient.service.IngredientService;
@@ -26,6 +27,7 @@ import java.util.List;
 public class IngredientController {
     private final IngredientService ingredientService;
 
+    // 식자재 조회
     @GetMapping("/{refrigeratorId}")
     public SuccessResponse<PageResponse<IngredientResponse>> getAllIngredients(
             @PathVariable Long refrigeratorId,
@@ -35,6 +37,7 @@ public class IngredientController {
                 ingredientService.getIngredients(refrigeratorId, filterRequest));
     }
 
+    // 식자재 업데이트
     @PutMapping("/{refrigeratorIngredientId}")
     public SuccessResponse<IngredientResponse> updateIngredient(
             @PathVariable Long refrigeratorIngredientId,
@@ -45,6 +48,7 @@ public class IngredientController {
                 ingredientService.updateIngredient(updateIngredientInfoRequest.toCommand(userId, refrigeratorIngredientId)));
     }
 
+    // 식자재 저장
     @PostMapping("/{refrigeratorId}")
     public SuccessResponse<List<IngredientResponse>> saveIngredient(
             @PathVariable Long refrigeratorId,
@@ -72,5 +76,14 @@ public class IngredientController {
     public SuccessResponse<List<IngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
                 ingredientService.registerFromPhoto(ingredientImage));
+    }
+
+    // 삭자재 자동 완성 검색
+    @GetMapping("/auto-complete")
+    public SuccessResponse<List<AutoCompleteSearchResponse>> getAllIngredients(
+            @RequestParam String keyword
+    ) {
+        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
+                ingredientService.searchAutoComplete(keyword));
     }
 }
