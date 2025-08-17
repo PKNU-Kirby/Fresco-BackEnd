@@ -7,19 +7,16 @@ import com.example.fresco.global.response.error.RecipeErrorCode;
 import com.example.fresco.ingredient.domain.Ingredient;
 import com.example.fresco.ingredient.domain.repository.IngredientRepository;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
-import com.example.fresco.recipe.controller.dto.response.OpenAiResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
 import com.example.fresco.recipe.domain.*;
 import com.example.fresco.recipe.domain.Repository.FavoriteRepository;
 import com.example.fresco.recipe.domain.Repository.RecipeRepository;
 import com.example.fresco.recipe.domain.Repository.ShareRepository;
-import com.example.fresco.recipe.util.OpenAIClient;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorRepository;
 import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,26 +30,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RecipeService {
 
-    private final OpenAIClient openAIClient;
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final UserRepository userRepository;
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
     private final FavoriteRepository favoriteRepository;
     private final ShareRepository shareRepository;
     private final RefrigeratorRepository refrigeratorRepository;
-
-    @Transactional
-    public OpenAiResponse generateRecipe(String prompt) {
-        try {
-            String argumentsJson = openAIClient.callFunction(prompt);
-            return objectMapper.readValue(argumentsJson, OpenAiResponse.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            e.getMessage();
-            throw new RestApiException(RecipeErrorCode.NULL_RECIPE_RECOMMEND);
-        }
-    }
 
     @Transactional
     public RecipeDetailResponse createRecipe(RecipeCreateRequest request, Long userId) {
@@ -84,7 +67,6 @@ public class RecipeService {
                     .recipe(recipe)
                     .ingredient(ingredient)
                     .quantity(ingredientDto.quantity())
-                    .instead(ingredientDto.scale())
                     .build();
 
             recipeIngredients.add(recipeIngredient);
@@ -138,16 +120,20 @@ public class RecipeService {
 
         recipe.getIngredients().clear();
         for (var i : request.ingredients()) {
-            Ingredient ing = ingredientRepository.findByName(i.ingredientName())
+            String ingredientName = (i.ingredientName() == null) ? null : i.ingredientName().trim();
+            if (ingredientName == null || ingredientName.isEmpty()) {
+                throw new RestApiException(IngredientErrorCode.NULL_INGREDIENT);
+            }
+
+            Ingredient ing = ingredientRepository.findByName(ingredientName)
                     .orElseGet(() -> ingredientRepository.save(
-                            Ingredient.builder().ingredientName(i.ingredientName()).build()
+                            Ingredient.builder().ingredientName(ingredientName).build()
                     ));
 
             RecipeIngredient ri = RecipeIngredient.builder()
                     .recipe(recipe)
                     .ingredient(ing)
                     .quantity(i.quantity())
-                    .instead(i.scale())
                     .build();
 
             recipe.getIngredients().add(ri);
@@ -206,8 +192,7 @@ public class RecipeService {
                 : favoriteRepository.findAllRecipeIdsByUserId(userId);
 
         recipes.sort(
-                Comparator.comparing((Recipe r) -> !favIds.contains(r.getId()))
-                        .thenComparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
+                Comparator.comparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
         );
 
         return recipes.stream()
@@ -216,5 +201,28 @@ public class RecipeService {
     }
 
 
+    @Transactional
+    public List<RecipeListResponse> listFavoriteRecipes(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
+
+        Set<Long> favoriteIds = favoriteRepository.findAllRecipeIdsByUserId(userId);
+        if (favoriteIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<Recipe> recipes = recipeRepository.findAllById(favoriteIds);
+        recipes.sort(
+                Comparator.comparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
+        );
+
+        return recipes.stream()
+                .map(r -> new RecipeListResponse(
+                        r.getId(),
+                        r.getTitle(),
+                        true // 즐겨찾기 목록이므로 항상 true
+                ))
+                .toList();
+    }
 
 }

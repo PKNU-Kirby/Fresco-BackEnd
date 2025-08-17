@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface FavoriteRepository extends JpaRepository<FavoritesRecipe, Long> {

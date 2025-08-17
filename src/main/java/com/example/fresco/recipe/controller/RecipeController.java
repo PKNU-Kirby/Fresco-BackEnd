@@ -6,6 +6,7 @@ import com.example.fresco.recipe.controller.dto.response.OpenAiResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
 import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
+import com.example.fresco.recipe.service.AiRecipeService;
 import com.example.fresco.recipe.service.RecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,13 @@ import java.util.Map;
 @RequestMapping("/recipe")
 public class RecipeController {
 
+    private final AiRecipeService aiRecipeService;
     private final RecipeService recipeService;
 
     @GetMapping("/ai")
     public SuccessResponse<OpenAiResponse> getRecipe(@RequestBody String prompt) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_RECOMMEND_SUCCESS,
-                recipeService.generateRecipe(prompt));
+                aiRecipeService.generateRecipe(prompt));
     }
 
     @PostMapping("/create")
@@ -98,6 +100,14 @@ public class RecipeController {
     ) {
         List<RecipeListResponse> list = recipeService.listSharedRecipes(refrigeratorId, userId);
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_SHARE_LIST_SUCCESS, list);
+    }
+
+    @GetMapping("/favorites")
+    public SuccessResponse<List<RecipeListResponse>> listMyFavorites(
+            @AuthenticationPrincipal Long userId
+    ) {
+        List<RecipeListResponse> result = recipeService.listFavoriteRecipes(userId);
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_FAVORITE_LIST_SUCCESS, result);
     }
 
 }

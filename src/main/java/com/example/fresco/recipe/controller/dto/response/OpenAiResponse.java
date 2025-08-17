@@ -8,6 +8,6 @@ public record OpenAiResponse (
         List<String> steps,
         List<Substitution> substitutions
 ){
-    public record Item(String ingredient, double quantity, String scale) {}
+    public record Item(String ingredient, String quantity) {}
     public record Substitution (String original, String substitute) {}
 }

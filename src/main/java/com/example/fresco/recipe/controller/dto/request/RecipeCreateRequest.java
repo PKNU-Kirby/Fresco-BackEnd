@@ -10,7 +10,6 @@ public record RecipeCreateRequest(
 ){
         public record RecipeIngredients (
                 String ingredientName,
-                Integer quantity,
-                String scale
+                String quantity
         ){}
 }

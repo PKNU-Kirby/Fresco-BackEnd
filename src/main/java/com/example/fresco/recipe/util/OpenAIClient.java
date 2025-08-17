@@ -33,13 +33,9 @@ public class OpenAIClient {
                                                 "type", "object",
                                                 "properties", Map.of(
                                                         "ingredient", Map.of("type", "string"),
-                                                        "quantity",   Map.of("type", "number"),
-                                                        "scale", Map.of(
-                                                                "type", "string",
-                                                                "enum", List.of("g", "개", "큰술", "작은술")
-                                                        )
+                                                        "quantity",   Map.of("type", "number")
                                                 ),
-                                                "required", List.of("ingredient", "quantity", "scale")
+                                                "required", List.of("ingredient", "quantity")
                                         )
                                 ),
                                 "steps", Map.of(
@@ -70,7 +66,7 @@ public class OpenAIClient {
                                 """
                                 {
                                   "title":"예시 볶음밥",
-                                  "ingredients":[{"ingredient":"당근","quantity":2, "scale":"개"}],
+                                  "ingredients":[{"ingredient":"당근","quantity":"2개"}],
                                  "steps":["1. 팬에 기름을 두른다 ..."],
                                   "substitutions":[{"original":"당근","substitute":"애호박"}]
                                 }

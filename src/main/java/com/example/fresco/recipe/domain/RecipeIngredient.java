@@ -24,11 +24,11 @@ public class RecipeIngredient extends BaseEntity {
     @JoinColumn(name = "ingredientId", nullable = false)
     private Ingredient ingredient;
 
-    private Integer quantity;
+    private String quantity;
     private String instead;
 
     @Builder
-    public RecipeIngredient(Recipe recipe, Ingredient ingredient, Integer quantity, String instead) {
+    public RecipeIngredient(Recipe recipe, Ingredient ingredient, String quantity, String instead) {
         this.recipe = recipe;
         this.ingredient = ingredient;
         this.quantity = quantity;

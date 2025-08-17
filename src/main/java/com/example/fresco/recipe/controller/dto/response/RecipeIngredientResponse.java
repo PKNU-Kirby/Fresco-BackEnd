@@ -5,7 +5,7 @@ import com.example.fresco.recipe.domain.RecipeIngredient;
 public record RecipeIngredientResponse(
         Long ingredientId,
         String name,
-        Integer quantity,
+        String quantity,
         String instead
 ) {
     public static RecipeIngredientResponse from(RecipeIngredient ri) {
