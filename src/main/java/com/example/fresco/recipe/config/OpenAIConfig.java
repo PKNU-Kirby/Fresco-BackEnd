@@ -1,35 +1,14 @@
 package com.example.fresco.recipe.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.chat.client.ChatClient;
 
 @Configuration
 public class OpenAIConfig {
-    @Value("${openai.api.key}")
-    private String apiKey;
-
-    @Value("${openai.api.url}")
-    private String apiUrl;
-
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
-    public HttpHeaders headers() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
-        return headers;
-    }
-
-    @Bean
-    public String openAiUrl() {
-        return apiUrl;
-    }
+    public ChatClient chatClient(OpenAiChatModel model) {
+        return ChatClient.builder(model).build();
+        }
 }

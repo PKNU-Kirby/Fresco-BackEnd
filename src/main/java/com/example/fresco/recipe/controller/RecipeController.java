@@ -24,12 +24,14 @@ public class RecipeController {
     private final AiRecipeService aiRecipeService;
     private final RecipeService recipeService;
 
+    // ai 추천 조회
     @GetMapping("/ai")
     public SuccessResponse<OpenAiResponse> getRecipe(@RequestBody String prompt) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_RECOMMEND_SUCCESS,
                 aiRecipeService.generateRecipe(prompt));
     }
 
+    //사용자 레시피 생성
     @PostMapping("/create")
     public SuccessResponse<RecipeDetailResponse> createRecipe(
             @AuthenticationPrincipal Long userId,
@@ -38,6 +40,7 @@ public class RecipeController {
                 recipeService.createRecipe(recipeRequest, userId));
     }
 
+    //레시피 상세 조회
     @GetMapping("/detail/{recipeId}")
     public SuccessResponse<RecipeDetailResponse> getRecipeDetail(
             @PathVariable Long recipeId) {
@@ -45,6 +48,7 @@ public class RecipeController {
                 recipeService.getRecipeDetail(recipeId));
     }
 
+    //레시피 리스트 조회
     @GetMapping("/list/{userId}")
     public SuccessResponse<List<RecipeListResponse>> getRecipeList(
             @PathVariable Long userId) {
@@ -52,6 +56,7 @@ public class RecipeController {
                 recipeService.getRecipeList(userId));
     }
 
+    //레시피 수정
     @PutMapping("/replace/{recipeId}")
     public SuccessResponse<RecipeDetailResponse> replaceRecipe(
             @PathVariable Long recipeId,
@@ -61,6 +66,7 @@ public class RecipeController {
                 recipeService.replaceRecipe(recipeId, request, userId));
     }
 
+    //레시피 삭제
     @DeleteMapping("/delete/{recipeId}")
     public SuccessResponse<List<RecipeListResponse>> deleteRecipes(
             @PathVariable List<Long> recipeId,
@@ -69,6 +75,7 @@ public class RecipeController {
         recipeService.deleteRecipes(recipeId, userId));
     }
 
+    //레시피 즐겨찾기 설정
     @PostMapping("/favorite/toggle/{recipeId}")
     public SuccessResponse<Map<String, Object>> toggleFavorite(
             @AuthenticationPrincipal Long userId,
@@ -81,6 +88,7 @@ public class RecipeController {
         );
     }
 
+    //레시피 공유
     @PostMapping("/share/toggle/{refrigeratorId}/{recipeId}")
     public SuccessResponse<Map<String, Object>> toggleShare(
             @PathVariable Long refrigeratorId,
@@ -93,6 +101,7 @@ public class RecipeController {
         );
     }
 
+    //레시피 공유 조회
     @GetMapping("/share/{refrigeratorId}")
     public SuccessResponse<List<RecipeListResponse>> listShared(
             @PathVariable Long refrigeratorId,
@@ -102,6 +111,7 @@ public class RecipeController {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_SHARE_LIST_SUCCESS, list);
     }
 
+    //레시피 즐겨찾기 조회
     @GetMapping("/favorites")
     public SuccessResponse<List<RecipeListResponse>> listMyFavorites(
             @AuthenticationPrincipal Long userId
