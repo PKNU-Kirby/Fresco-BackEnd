@@ -3,6 +3,7 @@ package com.example.fresco.recipe.domain;
 import com.example.fresco.global.domain.BaseEntity;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,10 +24,9 @@ public class Share extends BaseEntity {
     @JoinColumn(name = "recipeId", nullable = false)
     private Recipe recipe;
 
-    public static Share of(Refrigerator refrigerator, Recipe recipe) {
-        Share s = new Share();
-        s.refrigerator = refrigerator;
-        s.recipe = recipe;
-        return s;
+    @Builder
+    public Share(Refrigerator refrigerator, Recipe recipe) {
+        this.refrigerator = refrigerator;
+        this.recipe = recipe;
     }
 }

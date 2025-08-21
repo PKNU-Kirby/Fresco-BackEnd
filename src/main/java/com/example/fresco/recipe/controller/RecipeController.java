@@ -2,11 +2,10 @@ package com.example.fresco.recipe.controller;
 
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.RecipeSuccessCode;
-import com.example.fresco.recipe.controller.dto.response.NearExpiryResponse;
-import com.example.fresco.recipe.controller.dto.response.OpenAiResponse;
-import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
+import com.example.fresco.recipe.controller.dto.request.CookingRequest;
+import com.example.fresco.recipe.controller.dto.request.StockRequest;
+import com.example.fresco.recipe.controller.dto.response.*;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
-import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
 import com.example.fresco.recipe.service.AiRecipeService;
 import com.example.fresco.recipe.service.RecipeService;
 import jakarta.validation.Valid;
@@ -34,11 +33,21 @@ public class RecipeController {
         return SuccessResponse.of(RecipeSuccessCode.EXPIRY_INGREDIENT_LIST_SUCCESS, result);
     }
 
-    // ai 추천 조회
+    // ai 추천 레시피 조회
     @GetMapping("/ai")
-    public SuccessResponse<OpenAiResponse> getRecipe(@RequestParam String prompt) {
+    public SuccessResponse<OpenAiRecipeDto> getRecipe(@RequestParam String prompt) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_RECOMMEND_SUCCESS,
                 aiRecipeService.generateRecipe(prompt));
+    }
+
+    //ai 추천 레시피 저장
+    @PostMapping("/ai/save")
+    public SuccessResponse<RecipeDetailResponse> saveAiRecipe(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody @Valid OpenAiRecipeDto dto
+    ) {
+        RecipeDetailResponse result = aiRecipeService.saveFromOpenAi(userId, dto);
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_ADD_SUCCESS, result);
     }
 
     //사용자 레시피 생성
@@ -128,6 +137,26 @@ public class RecipeController {
     ) {
         List<RecipeListResponse> result = recipeService.listFavoriteRecipes(userId);
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_FAVORITE_LIST_SUCCESS, result);
+    }
+
+    //냉장고 재고 조회
+    @GetMapping("/stocks/{refrigeratorId}")
+    public SuccessResponse<List<StockResponse>> getRecipeIngredientStocks(
+            @PathVariable Long refrigeratorId,
+            @RequestParam List<String> recipeIngredientNames
+    ){
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_FAVORITE_LIST_SUCCESS,
+                                    recipeService.getRefrigeratorIngredientStocks(refrigeratorId, recipeIngredientNames));
+    }
+
+    //조리하기 식재료 차감
+    @PostMapping("/cook/use-ingredients")
+    public SuccessResponse<CookingResponse> useIngredients(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody @Valid CookingRequest request
+    ) {
+        CookingResponse result = recipeService.cookingUsage(userId, request);
+        return SuccessResponse.of(RecipeSuccessCode.COOKING_DECREASE_SUCCESS, result);
     }
 
 }

@@ -11,7 +11,7 @@ class UpdateIngredientQuantityHandler implements UpdateIngredientConditionHandle
 
     @Override
     public void update(RefrigeratorIngredient refrigeratorIngredient, UpdateIngredientConditionCommand updateContractConditionCommand) {
-        final Integer quantity = updateContractConditionCommand.quantity();
+        final Double quantity = updateContractConditionCommand.quantity();
 
         if (Objects.nonNull(quantity)) {
             refrigeratorIngredient.updateQuantity(quantity);

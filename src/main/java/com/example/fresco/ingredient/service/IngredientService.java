@@ -61,7 +61,7 @@ public class IngredientService {
         RefrigeratorIngredient prevIngredient = refrigeratorIngredientRepository.findById(command.refrigeratorIngredientId())
                 .orElseThrow(() -> new RestApiException(RefrigeratorIngredientErrorCode.NULL_REFRIGERATOR_INGREDIENT));
         User consumer = userRepository.findById(command.userId()).orElseThrow(() -> new RestApiException(UserErrorCode.NULL_USER));
-        int usedQuantity = prevIngredient.getQuantity() - command.quantity();
+        double usedQuantity = prevIngredient.getQuantity() - command.quantity();
 
         historyRepository.save(new History(consumer, prevIngredient, usedQuantity));
     }

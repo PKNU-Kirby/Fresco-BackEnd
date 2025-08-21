@@ -10,7 +10,7 @@ public record IngredientResponse(
         Short categoryId,
         String name,
         LocalDate expirationDate,
-        Integer quantity
+        Double quantity
 ) {
     public static IngredientResponse from(RefrigeratorIngredient refrigeratorIngredient) {
         return new IngredientResponse(

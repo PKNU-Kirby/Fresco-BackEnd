@@ -10,14 +10,14 @@ public record HistoryResponse(
         Long consumerId,
         String consumerName,
         String ingredientName,
-        Integer usedQuantity,
+        Double usedQuantity,
         LocalDateTime usedAt
 ) {
     public static HistoryResponse from(History history) {
         return HistoryResponse.builder()
                 .consumerId(history.getUser().getId())
                 .consumerName(history.getUser().getName())
-                .ingredientName(history.getRefrigeratorIngredient().getName())
+                .ingredientName(history.getRefrigeratorIngredient().getIngredient().getName())
                 .usedQuantity(history.getUsedQuantity())
                 .usedAt(history.getCreatedDate())
                 .build();

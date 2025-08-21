@@ -30,4 +30,13 @@ public interface RefrigeratorIngredientRepository extends JpaRepository<Refriger
     """)
     List<RefrigeratorIngredient> findByRefrigeratorAndExpirationDate(
             Long refrigeratorId, LocalDate targetDate);
+
+    @Query("""
+      select ri from RefrigeratorIngredient ri
+      join ri.ingredient i
+      where ri.refrigerator.id = :refrigeratorId
+        and i.name in :ingredientNames
+    """)
+    List<RefrigeratorIngredient> findAllByRefrigeratorIdAndIngredientNames(
+            Long refrigeratorId, List<String> ingredientNames);
 }

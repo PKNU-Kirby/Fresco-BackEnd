@@ -12,6 +12,6 @@ public record UpdateIngredientConditionCommand(
         Long refrigeratorIngredientId,
         String name,
         LocalDate expirationDate,
-        Integer quantity
+        Double quantity
 ) {
 }

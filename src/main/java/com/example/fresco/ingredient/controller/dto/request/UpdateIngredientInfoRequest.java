@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public record UpdateIngredientInfoRequest(
         String name,
         LocalDate expirationDate,
-        Integer quantity
+        Double quantity
 ) {
     public UpdateIngredientConditionCommand toCommand(Long userId, Long refrigeratorIngredientId) {
         return new UpdateIngredientConditionCommand(

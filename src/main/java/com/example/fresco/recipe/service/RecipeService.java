@@ -4,28 +4,39 @@ import com.example.fresco.global.exception.RestApiException;
 import com.example.fresco.global.response.error.AuthErrorCode;
 import com.example.fresco.global.response.error.IngredientErrorCode;
 import com.example.fresco.global.response.error.RecipeErrorCode;
+import com.example.fresco.global.response.error.RefrigeratorErrorCode;
+import com.example.fresco.history.domain.History;
+import com.example.fresco.history.domain.repository.HistoryRepository;
+import com.example.fresco.ingredient.domain.Category;
 import com.example.fresco.ingredient.domain.Ingredient;
+import com.example.fresco.ingredient.domain.repository.CategoryRepository;
 import com.example.fresco.ingredient.domain.repository.IngredientRepository;
+import com.example.fresco.recipe.controller.dto.request.CookingRequest;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
+import com.example.fresco.recipe.controller.dto.request.StockRequest;
+import com.example.fresco.recipe.controller.dto.response.CookingResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
+import com.example.fresco.recipe.controller.dto.response.StockResponse;
 import com.example.fresco.recipe.domain.*;
 import com.example.fresco.recipe.domain.Repository.FavoriteRepository;
 import com.example.fresco.recipe.domain.Repository.RecipeIngredientRepository;
 import com.example.fresco.recipe.domain.Repository.RecipeRepository;
 import com.example.fresco.recipe.domain.Repository.ShareRepository;
 import com.example.fresco.refrigerator.domain.Refrigerator;
+import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
+import com.example.fresco.refrigerator.domain.repository.RefrigeratorIngredientRepository;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorRepository;
 import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +49,9 @@ public class RecipeService {
     private final ShareRepository shareRepository;
     private final RefrigeratorRepository refrigeratorRepository;
     private final RecipeIngredientRepository recipeIngredientRepository;
+    private final RefrigeratorIngredientRepository refrigeratorIngredientRepository;
+    private final HistoryRepository historyRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public RecipeDetailResponse createRecipe(RecipeCreateRequest request, Long userId) {
@@ -52,6 +66,8 @@ public class RecipeService {
                 .build();
         Recipe saved = recipeRepository.save(recipe);
 
+        Category etcCategory = categoryRepository.findById(11L).get();
+
         List<RecipeIngredient> recipeIngredients = new ArrayList<>();
         for (RecipeCreateRequest.RecipeIngredients ingredientDto : request.ingredients()) {
             String ingredientName = ingredientDto.ingredientName() == null ? null : ingredientDto.ingredientName().trim();
@@ -62,6 +78,7 @@ public class RecipeService {
                     .orElseGet(() -> ingredientRepository.save(
                             Ingredient.builder()
                                     .ingredientName(ingredientName)
+                                    .category(etcCategory)
                                     .build()
                     ));
 
@@ -196,7 +213,7 @@ public class RecipeService {
         Refrigerator refrigerator = refrigeratorRepository.getReferenceById(refrigeratorId);
         Recipe recipe = recipeRepository.getReferenceById(recipeId);
 
-        shareRepository.save(Share.of(refrigerator, recipe));
+        shareRepository.save(new Share(refrigerator, recipe));
         return true;
     }
 
@@ -239,6 +256,92 @@ public class RecipeService {
                         true // 즐겨찾기 목록이므로 항상 true
                 ))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StockResponse> getRefrigeratorIngredientStocks(Long refrigeratorId, List<String> ingredientNames) {
+        //재고 조회
+        List<RefrigeratorIngredient> stocks =
+                refrigeratorIngredientRepository.findAllByRefrigeratorIdAndIngredientNames(refrigeratorId, ingredientNames);
+
+        return StockResponse.fromRefrigeratorIngredient(stocks);
+    }
+
+    @Transactional
+    public CookingResponse cookingUsage(Long userId, CookingRequest req) {
+        Refrigerator ref = refrigeratorRepository.findById(req.refrigeratorId())
+                .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
+
+        List<String> recipeIngredientNames = req.recipeIngredients().stream()
+                        .map(CookingRequest.Item::ingredientName)
+                        .toList();
+
+        List<RefrigeratorIngredient> stocks =
+                refrigeratorIngredientRepository.findAllByRefrigeratorIdAndIngredientNames(req.refrigeratorId(), recipeIngredientNames);
+
+        Map<String, CookingRequest.Item> reqMap = req.recipeIngredients().stream()
+                .collect(Collectors.toMap(
+                        CookingRequest.Item::ingredientName,
+                        it -> it,
+                        (a, b) -> b
+                ));
+
+        //차감 로직
+        List<RefrigeratorIngredient> remainStocks = stocks.stream()
+                                .peek(stock -> {
+                                    String name = stock.getIngredient().getName();
+                                    CookingRequest.Item item = reqMap.get(name);
+
+                                    BigDecimal before = BigDecimal.valueOf(stock.getQuantity())
+                                            .setScale(1, RoundingMode.HALF_UP);
+
+                                    // 차감량 = 전체수량 × percent / 100
+                                    BigDecimal used = BigDecimal.valueOf(item.quantity())
+                                            .multiply(BigDecimal.valueOf(item.percent()))
+                                            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
+                                            .setScale(1, RoundingMode.HALF_UP);
+
+                                    BigDecimal after = before.subtract(used);
+                                    if (after.compareTo(BigDecimal.ZERO) < 0) after = BigDecimal.ZERO;
+
+                                    stock.updateQuantity(after.doubleValue());
+                                })
+                                .toList();
+
+        refrigeratorIngredientRepository.saveAll(remainStocks);
+
+        List<CookingResponse.ResultItem> result = remainStocks.stream()
+                .map(ri -> new CookingResponse.ResultItem(
+                        ri.getIngredient().getId(),
+                        ri.getIngredient().getName(),
+                        ri.getUnit()
+                ))
+                .toList();
+
+
+        //사용 기록 저장
+        List<History> histories = remainStocks.stream()
+                .map(ri -> {
+                    String name = ri.getIngredient().getName();
+                    CookingRequest.Item item = reqMap.get(name);
+
+                    BigDecimal used = BigDecimal.valueOf(item.quantity())
+                            .multiply(BigDecimal.valueOf(item.percent()))
+                            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
+                            .setScale(1, RoundingMode.HALF_UP);
+
+                    return new History(
+                            userRepository.getReferenceById(userId),
+                            ri,
+                            used.doubleValue()
+                    );
+                })
+                .toList();
+
+        historyRepository.saveAll(histories);
+
+
+        return new CookingResponse(req.refrigeratorId(),userId,result);
     }
 
 }

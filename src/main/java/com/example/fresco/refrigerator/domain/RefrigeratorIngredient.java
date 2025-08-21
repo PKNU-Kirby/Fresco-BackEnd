@@ -31,22 +31,18 @@ public class RefrigeratorIngredient extends BaseEntity {
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
 
-    @Column(nullable = false, length = 150)
-    private String name;
-
     private LocalDate expirationDate;
 
-    private Integer quantity = 0;
+    @Column(nullable = false)
+    private String unit;
+
+    private Double quantity = 0.0;
 
     public void updateExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updateQuantity(Integer quantity) {
+    public void updateQuantity(Double quantity) {
         this.quantity = quantity;
     }
 }
