@@ -7,11 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "recipe")
+@Table(name = "recipes")
 @NoArgsConstructor
 @Getter
 public class Recipe extends BaseEntity {
@@ -23,10 +20,6 @@ public class Recipe extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "recipeIngredientId")
-    private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;

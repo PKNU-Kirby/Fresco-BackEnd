@@ -11,6 +11,7 @@ import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
 import com.example.fresco.recipe.domain.*;
 import com.example.fresco.recipe.domain.Repository.FavoriteRepository;
+import com.example.fresco.recipe.domain.Repository.RecipeIngredientRepository;
 import com.example.fresco.recipe.domain.Repository.RecipeRepository;
 import com.example.fresco.recipe.domain.Repository.ShareRepository;
 import com.example.fresco.refrigerator.domain.Refrigerator;
@@ -36,6 +37,7 @@ public class RecipeService {
     private final FavoriteRepository favoriteRepository;
     private final ShareRepository shareRepository;
     private final RefrigeratorRepository refrigeratorRepository;
+    private final RecipeIngredientRepository recipeIngredientRepository;
 
     @Transactional
     public RecipeDetailResponse createRecipe(RecipeCreateRequest request, Long userId) {
@@ -48,6 +50,7 @@ public class RecipeService {
                 .url(request.url())
                 .user(user)
                 .build();
+        Recipe saved = recipeRepository.save(recipe);
 
         List<RecipeIngredient> recipeIngredients = new ArrayList<>();
         for (RecipeCreateRequest.RecipeIngredients ingredientDto : request.ingredients()) {
@@ -67,22 +70,23 @@ public class RecipeService {
                     .recipe(recipe)
                     .ingredient(ingredient)
                     .quantity(ingredientDto.quantity())
+                    .unit(ingredientDto.unit())
                     .build();
 
             recipeIngredients.add(recipeIngredient);
         }
 
-        recipe.getIngredients().addAll(recipeIngredients);
-        Recipe saved = recipeRepository.save(recipe);
-
-        return RecipeDetailResponse.from(saved);
+        recipeIngredientRepository.saveAll(recipeIngredients);
+        List<RecipeIngredient> items = recipeIngredientRepository.findAllByRecipeId(saved.getId());
+        return RecipeDetailResponse.from(saved, items);
     }
 
     @Transactional
     public RecipeDetailResponse getRecipeDetail(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RestApiException(RecipeErrorCode.NULL_RECIPE));
-        return RecipeDetailResponse.from(recipe);
+        List<RecipeIngredient> items = recipeIngredientRepository.findAllByRecipeId(recipeId);
+        return RecipeDetailResponse.from(recipe, items);
     }
 
     @Transactional
@@ -112,13 +116,23 @@ public class RecipeService {
 
     @Transactional
     public RecipeDetailResponse replaceRecipe(Long recipeId,RecipeCreateRequest request, Long userId){
-        Recipe recipe = recipeRepository.getReferenceById(recipeId);
 
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RestApiException(RecipeErrorCode.RECIPE_NOT_FOUND));
+
+        if (!recipe.getUser().getId().equals(userId)) {
+            throw new RestApiException(RecipeErrorCode.RECIPE_FORBIDDEN);
+        }
+
+        //레시피(부모) 업데이트
         recipe.updateTitle(request.title());
         recipe.updateSteps(request.steps());
         recipe.updateUrl(request.url());
 
-        recipe.getIngredients().clear();
+        recipeIngredientRepository.deleteAllByRecipeId(recipeId); //레시피 재료 전체 삭제
+
+        //레시피 재료 재생성
+        List<RecipeIngredient> children = new ArrayList<>();
         for (var i : request.ingredients()) {
             String ingredientName = (i.ingredientName() == null) ? null : i.ingredientName().trim();
             if (ingredientName == null || ingredientName.isEmpty()) {
@@ -134,12 +148,14 @@ public class RecipeService {
                     .recipe(recipe)
                     .ingredient(ing)
                     .quantity(i.quantity())
+                    .unit(i.unit())
                     .build();
 
-            recipe.getIngredients().add(ri);
+            children.add(ri);
         }
+        recipeIngredientRepository.saveAll(children);
 
-        return RecipeDetailResponse.from(recipeRepository.save(recipe));
+        return RecipeDetailResponse.from(recipe, recipeIngredientRepository.findAllByRecipeId(recipeId));
     }
 
     @Transactional

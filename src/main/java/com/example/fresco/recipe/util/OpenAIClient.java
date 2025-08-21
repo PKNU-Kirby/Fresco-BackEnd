@@ -19,11 +19,13 @@ public class OpenAIClient {
         String content = chat
                 .prompt()
                 .messages(
-                        new SystemMessage("아래 JSON 형식을 반드시 지켜서 반환하라. 레시피에 사용된 모든 재료를 표시하고, steps의 각 요소 앞에는 \"1. \",\"2. \" 이런식으로 숫자를 붙여 나오게 하라.:\n{ title: string, ingredients: [{ingredient, quantity}], steps: [string], substitutions: [{original, substitute}] }"),
+                        new SystemMessage("아래 JSON 형식을 반드시 지켜서 반환하라. 레시피에 사용된 모든 재료를 표시하고, " +
+                                "steps의 각 요소 앞에는 \"1. \",\"2. \" 이런식으로 숫자를 붙여 나오게 하라." +
+                                ":\n{ title: string, ingredients: [{ingredient: [string], quantity: [number], unit: [string]}], steps: [string], substitutions: [{original: [string], substitute: [string]}] }"),
                         new AssistantMessage("""
                             {
                               "title":"예시 볶음밥",
-                              "ingredients":[{"ingredient":"당근","quantity":"2개"}],
+                              "ingredients":[{"ingredient":"당근","quantity":"2.0","unit:개"}],
                               "steps":["1. 팬에 기름을 두른다 ..."],
                               "substitutions":[{"original":"당근","substitute":"애호박"}]
                             }

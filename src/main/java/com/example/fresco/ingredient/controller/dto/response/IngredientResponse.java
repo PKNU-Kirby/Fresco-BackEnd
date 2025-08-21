@@ -5,19 +5,21 @@ import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
 import java.time.LocalDate;
 
 public record IngredientResponse(
-        Long ingredientId,
-        Long categoryId,
+        Long id,
+        Short ingredientId,
+        Short categoryId,
         String name,
         LocalDate expirationDate,
         Integer quantity
 ) {
-    public static IngredientResponse from(RefrigeratorIngredient ingredient) {
+    public static IngredientResponse from(RefrigeratorIngredient refrigeratorIngredient) {
         return new IngredientResponse(
-                ingredient.getId(),
-                ingredient.getCategory().getId(),
-                ingredient.getName(),
-                ingredient.getExpirationDate(),
-                ingredient.getQuantity()
+                refrigeratorIngredient.getId(),
+                refrigeratorIngredient.getIngredient().getId(),
+                refrigeratorIngredient.getCategory().getId(),
+                refrigeratorIngredient.getIngredient().getName(),
+                refrigeratorIngredient.getExpirationDate(),
+                refrigeratorIngredient.getQuantity()
         );
     }
 }

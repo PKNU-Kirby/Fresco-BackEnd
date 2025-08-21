@@ -53,3 +53,11 @@ spring:
     aws:
       region:
         static: ap-northeast-2
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG                       # 생성된 SQL
+    org.hibernate.orm.jdbc.bind: TRACE             # 바인딩 값 (Hibernate 6)
+    org.hibernate.type.descriptor.jdbc: TRACE      # 타입 변환 디버그
+    org.hibernate.boot.model.naming: DEBUG

@@ -2,6 +2,7 @@ package com.example.fresco.recipe.controller;
 
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.RecipeSuccessCode;
+import com.example.fresco.recipe.controller.dto.response.NearExpiryResponse;
 import com.example.fresco.recipe.controller.dto.response.OpenAiResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
@@ -24,9 +25,18 @@ public class RecipeController {
     private final AiRecipeService aiRecipeService;
     private final RecipeService recipeService;
 
+    //소비기한 임박 식재료 조회
+    @GetMapping("/expiry/{refrigeratorId}")
+    public SuccessResponse<NearExpiryResponse> getExpiryIngredientList(
+            @PathVariable Long refrigeratorId
+    ) {
+        var result = aiRecipeService.listNearExpiryNameBuckets(refrigeratorId);
+        return SuccessResponse.of(RecipeSuccessCode.EXPIRY_INGREDIENT_LIST_SUCCESS, result);
+    }
+
     // ai 추천 조회
     @GetMapping("/ai")
-    public SuccessResponse<OpenAiResponse> getRecipe(@RequestBody String prompt) {
+    public SuccessResponse<OpenAiResponse> getRecipe(@RequestParam String prompt) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_RECOMMEND_SUCCESS,
                 aiRecipeService.generateRecipe(prompt));
     }

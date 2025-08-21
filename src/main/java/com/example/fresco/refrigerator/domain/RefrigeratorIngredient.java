@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "refrigeratorIngredient")
+@Table(name = "refrigeratorIngredients")
 @NoArgsConstructor
 @Getter
 public class RefrigeratorIngredient extends BaseEntity {

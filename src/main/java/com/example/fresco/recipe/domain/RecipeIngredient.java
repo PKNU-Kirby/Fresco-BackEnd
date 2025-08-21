@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "recipeIngredient")
+@Table(name = "recipeIngredients")
 @NoArgsConstructor
 @Getter
 public class RecipeIngredient extends BaseEntity {
@@ -24,14 +24,16 @@ public class RecipeIngredient extends BaseEntity {
     @JoinColumn(name = "ingredientId", nullable = false)
     private Ingredient ingredient;
 
-    private String quantity;
+    private Double quantity;
+    private String unit;
     private String instead;
 
     @Builder
-    public RecipeIngredient(Recipe recipe, Ingredient ingredient, String quantity, String instead) {
+    public RecipeIngredient(Recipe recipe, Ingredient ingredient, Double quantity, String unit, String instead) {
         this.recipe = recipe;
         this.ingredient = ingredient;
         this.quantity = quantity;
+        this.unit = unit;
         this.instead = instead;
     }
 }

@@ -8,13 +8,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface RefrigeratorIngredientRepository extends JpaRepository<RefrigeratorIngredient, Long> {
-    @Query("select new com.example.fresco.ingredient.controller.dto.response.IngredientResponse(ri.id, ri.category.id, ri.name, ri.expirationDate, ri.quantity) " +
+    @Query("select new com.example.fresco.ingredient.controller.dto.response.IngredientResponse(ri.id, ri.ingredient.id, ri.category.id, ri.ingredient.name, ri.expirationDate, ri.quantity) " +
             "from RefrigeratorIngredient ri " +
             "where ri.refrigerator.id = :refrigeratorId and ri.category.id in(:categoryIds) "
     )
     Page<IngredientResponse> findByRefrigeratorIdAndCategoryIdIn(Long refrigeratorId, List<Long> categoryIds, Pageable pageable);
+
+    @Query("""
+        select ri
+        from RefrigeratorIngredient ri
+        join fetch ri.refrigerator r
+        join fetch ri.ingredient ing
+        where r.id = :refrigeratorId
+          and ri.expirationDate = :targetDate
+        order by ri.expirationDate asc, ri.id asc
+    """)
+    List<RefrigeratorIngredient> findByRefrigeratorAndExpirationDate(
+            Long refrigeratorId, LocalDate targetDate);
 }

@@ -16,7 +16,8 @@ public enum RecipeSuccessCode implements SuccessCode {
     RECIPE_FAVORITE_SUCCESS("RECIPE_007", HttpStatus.OK, "레시피 즐겨찾기 성공"),
     RECIPE_SHARE_SUCCESS("RECIPE_008", HttpStatus.OK, "레시피 공유 성공"),
     RECIPE_SHARE_LIST_SUCCESS("RECIPE_009", HttpStatus.OK, "공유 레시피 조회 성공"),
-    RECIPE_FAVORITE_LIST_SUCCESS("RECIPE_010", HttpStatus.OK, "즐겨찾기 레시피 조회 성공");
+    RECIPE_FAVORITE_LIST_SUCCESS("RECIPE_010", HttpStatus.OK, "즐겨찾기 레시피 조회 성공"),
+    EXPIRY_INGREDIENT_LIST_SUCCESS("RECIPE_011", HttpStatus.OK, "임박 식재료 조회 성공");
 
     private final String code;
     private final HttpStatus httpStatus;
