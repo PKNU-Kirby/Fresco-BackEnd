@@ -68,9 +68,9 @@ public class RecipeController {
     }
 
     //레시피 리스트 조회
-    @GetMapping("/list/{userId}")
+    @GetMapping("/list")
     public SuccessResponse<List<RecipeListResponse>> getRecipeList(
-            @PathVariable Long userId) {
+            @AuthenticationPrincipal Long userId) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_GET_SUCCESS,
                 recipeService.getRecipeList(userId));
     }
@@ -140,7 +140,7 @@ public class RecipeController {
     }
 
     //냉장고 재고 조회
-    @GetMapping("/stocks/{refrigeratorId}")
+    @GetMapping("/cook/stocks/{refrigeratorId}")
     public SuccessResponse<List<StockResponse>> getRecipeIngredientStocks(
             @PathVariable Long refrigeratorId,
             @RequestParam List<String> recipeIngredientNames
@@ -157,6 +157,16 @@ public class RecipeController {
     ) {
         CookingResponse result = recipeService.cookingUsage(userId, request);
         return SuccessResponse.of(RecipeSuccessCode.COOKING_DECREASE_SUCCESS, result);
+    }
+
+    //레시피 검색
+    @GetMapping("/search")
+    public SuccessResponse<List<RecipeListResponse>> search(
+            @RequestParam("word") String word,
+            @AuthenticationPrincipal Long userId
+    ) {
+        List<RecipeListResponse> result = recipeService.search(word, userId);
+        return SuccessResponse.of(RecipeSuccessCode.RECIPE_SEARCH_SUCCESS, result);
     }
 
 }

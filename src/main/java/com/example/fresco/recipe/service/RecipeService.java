@@ -1,10 +1,7 @@
 package com.example.fresco.recipe.service;
 
 import com.example.fresco.global.exception.RestApiException;
-import com.example.fresco.global.response.error.AuthErrorCode;
-import com.example.fresco.global.response.error.IngredientErrorCode;
-import com.example.fresco.global.response.error.RecipeErrorCode;
-import com.example.fresco.global.response.error.RefrigeratorErrorCode;
+import com.example.fresco.global.response.error.*;
 import com.example.fresco.history.domain.History;
 import com.example.fresco.history.domain.repository.HistoryRepository;
 import com.example.fresco.ingredient.domain.Category;
@@ -198,20 +195,27 @@ public class RecipeService {
             return false;
         }
 
-        User user = userRepository.getReferenceById(userId);
-        Recipe recipe = recipeRepository.getReferenceById(recipeId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RestApiException(UserErrorCode.NULL_USER));
+
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RestApiException(RecipeErrorCode.RECIPE_NOT_FOUND));
         favoriteRepository.save(FavoritesRecipe.of(user, recipe));
         return true;
     }
 
     @Transactional
     public boolean ShareToggle(Long refrigeratorId, Long recipeId) {
+        Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId)
+                .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
+
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RestApiException(RecipeErrorCode.RECIPE_NOT_FOUND));
+
         if (shareRepository.existsByRefrigeratorIdAndRecipeId(refrigeratorId, recipeId)) {
             shareRepository.deleteByRefrigeratorIdAndRecipeId(refrigeratorId, recipeId);
             return false;
         }
-        Refrigerator refrigerator = refrigeratorRepository.getReferenceById(refrigeratorId);
-        Recipe recipe = recipeRepository.getReferenceById(recipeId);
 
         shareRepository.save(new Share(refrigerator, recipe));
         return true;
@@ -314,7 +318,7 @@ public class RecipeService {
                 .map(ri -> new CookingResponse.ResultItem(
                         ri.getIngredient().getId(),
                         ri.getIngredient().getName(),
-                        ri.getUnit()
+                        ri.getQuantity()
                 ))
                 .toList();
 
@@ -342,6 +346,28 @@ public class RecipeService {
 
 
         return new CookingResponse(req.refrigeratorId(),userId,result);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecipeListResponse> search(String keyword, Long userId) {
+        String word = (keyword == null) ? "" : keyword.trim();
+        if (word.isEmpty()) {
+            return List.of();
+        }
+
+        List<Recipe> recipes = recipeRepository.searchAll(word);
+
+        Set<Long> favIds = (userId == null)
+                ? Set.of()
+                : favoriteRepository.findAllRecipeIdsByUserId(userId);
+
+        return recipes.stream()
+                .map(r -> new RecipeListResponse(
+                        r.getId(),
+                        r.getTitle(),
+                        favIds.contains(r.getId())
+                ))
+                .toList();
     }
 
 }

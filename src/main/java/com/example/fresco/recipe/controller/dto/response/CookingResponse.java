@@ -11,7 +11,7 @@ public record CookingResponse (
     public record ResultItem(
             Short ingredientId,
             String name,
-            String unit
+            Double quantity
     ) {
     }
 }
