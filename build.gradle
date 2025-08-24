@@ -70,7 +70,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     //Fcm
-    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
 
     //PARAMETER_STORE_STARTER
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store:3.0.3'
