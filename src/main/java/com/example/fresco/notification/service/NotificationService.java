@@ -32,21 +32,21 @@ public class NotificationService {
             log.info("푸시 알림 발송 성공: {}", messageId);
             return "푸시 알림 발송 성공";
 
-        } catch (FirebaseMessagingException e){
+        } catch (FirebaseMessagingException e) {
             log.error("푸시 알림 발송 실패: {}", e.getMessage());
             throw new RestApiException(NotificationErrorCode.NOTIFICATION_SEND_FAILED);
         }
     }
 
     public String sendNotification(String fcmToken, String title, String body) throws FirebaseMessagingException {
-            Message message = Message.builder()
-                    .setToken(fcmToken)
-                    .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
-                            .build())
-                    .build();
+        Message message = Message.builder()
+                .setToken(fcmToken)
+                .setNotification(Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build())
+                .build();
 
-           return firebaseMessaging.send(message);
+        return firebaseMessaging.send(message);
     }
 }

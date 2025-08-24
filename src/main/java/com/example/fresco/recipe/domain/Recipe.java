@@ -1,9 +1,9 @@
 package com.example.fresco.recipe.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
-import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,20 +21,31 @@ public class Recipe extends BaseEntity {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "refrigeratorId", nullable = false)
-    private Refrigerator refrigerator;
-
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
+    @Lob
+    private String steps;
 
-    public Recipe(User user, Refrigerator refrigerator, String title, String description) {
+    private String url;
+
+    @Builder
+    public Recipe(User user, String title, String steps, String url) {
         this.user = user;
-        this.refrigerator = refrigerator;
         this.title = title;
-        this.description = description;
+        this.steps = steps;
+        this.url = url;
+    }
+
+    public void updateUrl(String url) {
+        this.url = url;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateSteps(String steps) {
+        this.steps = steps;
     }
 }

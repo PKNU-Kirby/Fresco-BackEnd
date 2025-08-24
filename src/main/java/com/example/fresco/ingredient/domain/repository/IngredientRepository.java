@@ -8,9 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
+public interface IngredientRepository extends JpaRepository<Ingredient, Short> {
+    Optional<Ingredient> findByName(String name);
+
+    List<Ingredient> findAllByIdIn(List<Short> ingredientIds);
 
     // 1순위: 정확한 시작 매치 (가장 높은 우선순위)
     @Query("SELECT new com.example.fresco.ingredient.controller.dto.response.AutoCompleteSearchResponse(i.id, i.name, i.category.id, i.category.name) " +

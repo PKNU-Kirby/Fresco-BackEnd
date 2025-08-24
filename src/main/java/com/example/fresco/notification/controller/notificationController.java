@@ -20,7 +20,7 @@ public class notificationController {
             @RequestBody CustomNotificationRequest customNotificationRequest,
             @RequestHeader(value = "X-FCM-Token") String fcmToken
     ) {
-        return SuccessResponse.of(NotificationSuccessCode.NOTIFICATION_PUSH_SUCCESS ,
+        return SuccessResponse.of(NotificationSuccessCode.NOTIFICATION_PUSH_SUCCESS,
                 notificationService.sendCustomNotification(fcmToken, customNotificationRequest));
     }
 }

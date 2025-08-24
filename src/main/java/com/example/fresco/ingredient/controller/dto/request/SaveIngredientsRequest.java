@@ -7,8 +7,8 @@ import java.util.List;
 public record SaveIngredientsRequest(
         List<SaveIngredientInfo> ingredientsInfo
 ) {
-    public List<Long> getIngredientIds() {
-        List<Long> ingredientIds = new ArrayList<>();
+    public List<Short> getIngredientIds() {
+        List<Short> ingredientIds = new ArrayList<>();
         for (SaveIngredientInfo ingredientInfo : ingredientsInfo) {
             ingredientIds.add(ingredientInfo.ingredientId);
         }
@@ -16,8 +16,8 @@ public record SaveIngredientsRequest(
     }
 
     public record SaveIngredientInfo(
-            Long ingredientId,
-            Long categoryId,
+            Short ingredientId,
+            Short categoryId,
             LocalDate expirationDate
     ) {
     }

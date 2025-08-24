@@ -2,7 +2,6 @@ package com.example.fresco.grocerylist.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Table(name = "grocerylistitems")
+@Table(name = "groceryListItems")
 public class GroceryItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +24,14 @@ public class GroceryItem extends BaseEntity {
     private String name;
 
     private Boolean purchased;
+
+    @Builder
+    public GroceryItem(GroceryList groceryList, Integer quantity, String name, Boolean purchased) {
+        this.groceryList = groceryList;
+        this.quantity = quantity;
+        this.name = name;
+        this.purchased = purchased;
+    }
 
     public void updateName(String newName) {
         this.name = newName;

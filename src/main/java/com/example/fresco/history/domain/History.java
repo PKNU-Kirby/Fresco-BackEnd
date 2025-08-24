@@ -24,8 +24,11 @@ public class History extends BaseEntity {
     @JoinColumn(name = "refrigeratorIngredientId", nullable = false)
     private RefrigeratorIngredient refrigeratorIngredient;
 
-    public History(User user, RefrigeratorIngredient refrigeratorIngredient) {
+    private Double usedQuantity = 0.0;
+
+    public History(User user, RefrigeratorIngredient refrigeratorIngredient, Double usedQuantity) {
         this.user = user;
         this.refrigeratorIngredient = refrigeratorIngredient;
+        this.usedQuantity = usedQuantity;
     }
 }

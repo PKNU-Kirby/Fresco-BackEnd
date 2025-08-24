@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "grocerylists")
+@Table(name = "groceryLists")
 public class GroceryList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +23,8 @@ public class GroceryList extends BaseEntity {
     private Integer totalAmount;
 
     @Builder
-    public GroceryList(Refrigerator refrigerator, Integer totalAmount) {
-        this.refrigerator = refrigerator;
+    public GroceryList(Integer totalAmount, Refrigerator refrigerator) {
         this.totalAmount = totalAmount;
+        this.refrigerator = refrigerator;
     }
 }

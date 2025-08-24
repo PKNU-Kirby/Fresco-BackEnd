@@ -58,10 +58,10 @@ public class IngredientService {
     private final DataApiClient dataApiClient;
 
     @Transactional(readOnly = true)
-    public PageResponse<IngredientResponse> getIngredients(Long refrigeratorId, IngredientFilterRequest filter) {
+    public PageResponse<RefrigeratorIngredientResponse> getIngredients(Long refrigeratorId, IngredientFilterRequest filter) {
         Sort sortType = getSortType(filter);
         PageRequest pageRequest = PageRequest.of(filter.getPage(), filter.getSize(), sortType);
-        Page<IngredientResponse> page = refrigeratorIngredientRepository.findByRefrigeratorIdAndCategoryIdIn(refrigeratorId, filter.getCategoryIds(), pageRequest);
+        Page<RefrigeratorIngredientResponse> page = refrigeratorIngredientRepository.findByRefrigeratorIdAndCategoryIdIn(refrigeratorId, filter.getCategoryIds(), pageRequest);
         return new PageResponse<>(page.getContent(), PageInfo.getPageInfo(page));
     }
 
@@ -73,25 +73,25 @@ public class IngredientService {
     }
 
     @Transactional
-    public IngredientResponse updateIngredient(UpdateIngredientConditionCommand updateIngredientConditionCommand) {
+    public RefrigeratorIngredientResponse updateIngredient(UpdateIngredientConditionCommand updateIngredientConditionCommand) {
         RefrigeratorIngredient refrigeratorIngredient = refrigeratorIngredientRepository.findById(updateIngredientConditionCommand.refrigeratorIngredientId())
                 .orElseThrow(() -> new RestApiException(IngredientErrorCode.NULL_INGREDIENT));
 
         updateIngredientConditionManager.updateContract(refrigeratorIngredient, updateIngredientConditionCommand);
         saveUsedHistory(updateIngredientConditionCommand);
         RefrigeratorIngredient savedIngredient = refrigeratorIngredientRepository.save(refrigeratorIngredient);
-        return IngredientResponse.from(savedIngredient);
+        return RefrigeratorIngredientResponse.from(savedIngredient);
     }
 
     @Transactional
-    public List<IngredientResponse> saveIngredient(Long refrigeratorId, SaveIngredientsRequest request) {
+    public List<RefrigeratorIngredientResponse> saveIngredient(Long refrigeratorId, SaveIngredientsRequest request) {
         Refrigerator refrigerator = refrigeratorRepository.findById(refrigeratorId).orElseThrow(
                 () -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
 
-        List<Long> ingredientIds = request.getIngredientIds();
-        List<Ingredient> allIngredients = ingredientRepository.findAllById(ingredientIds);
+        List<Short> ingredientIds = request.getIngredientIds();
+        List<Ingredient> allIngredients = ingredientRepository.findAllByIdIn(ingredientIds);
 
-        Map<Long, Ingredient> ingredientMap = allIngredients.stream()
+        Map<Short, Ingredient> ingredientMap = allIngredients.stream()
                 .collect(Collectors.toMap(Ingredient::getId, Function.identity()));
 
         List<RefrigeratorIngredient> refrigeratorIngredients = request.ingredientsInfo().stream()
@@ -107,7 +107,7 @@ public class IngredientService {
                 .toList();
 
         List<RefrigeratorIngredient> savedIngredients = refrigeratorIngredientRepository.saveAll(refrigeratorIngredients);
-        return IngredientResponse.getListFromRefrigeratorIngredients(savedIngredients);
+        return RefrigeratorIngredientResponse.getListFromRefrigeratorIngredients(savedIngredients);
     }
 
     @Transactional
@@ -126,11 +126,11 @@ public class IngredientService {
         long receiptEndTime = System.currentTimeMillis();
         log.info("영수증 종료 시간 : {}", receiptEndTime);
 
-        List<Long> ingredientIds = receiptMatchList.getIngredientIds();
+        List<Short> ingredientIds = receiptMatchList.getIngredientIds();
 
-        List<Ingredient> allIngredients = ingredientRepository.findAllById(ingredientIds);
+        List<Ingredient> allIngredients = ingredientRepository.findAllByIdIn(ingredientIds);
 
-        Map<Long, LocalDate> expirationDateMap = allIngredients.stream()
+        Map<Short, LocalDate> expirationDateMap = allIngredients.stream()
                 .collect(Collectors.toMap(
                         Ingredient::getId,
                         ingredient -> LocalDate.now().plusDays(ingredient.getDefaultUseByPeriod())
@@ -144,15 +144,15 @@ public class IngredientService {
     }
 
     @Transactional
-    public List<IngredientResponse> registerFromPhoto(MultipartFile ingredientImage) {
+    public List<RefrigeratorIngredientResponse> registerFromPhoto(MultipartFile ingredientImage) {
         // 사진 보내기
         IngredientListResponse ingredientImageListResponse = dataApiClient.sendImage(ingredientImage);
 
         // 응답 변환
-        List<Long> ingredientIds = ingredientImageListResponse.getIngredientIds();
-        List<Ingredient> allIngredients = ingredientRepository.findAllById(ingredientIds);
+        List<Short> ingredientIds = ingredientImageListResponse.getIngredientIds();
+        List<Ingredient> allIngredients = ingredientRepository.findAllByIdIn(ingredientIds);
 
-        Map<Long, LocalDate> expirationDateMap = allIngredients.stream()
+        Map<Short, LocalDate> expirationDateMap = allIngredients.stream()
                 .collect(Collectors.toMap(
                         Ingredient::getId,
                         ingredient -> LocalDate.now().plusDays(ingredient.getDefaultUseByPeriod())
@@ -211,7 +211,8 @@ public class IngredientService {
         RefrigeratorIngredient prevIngredient = refrigeratorIngredientRepository.findById(command.refrigeratorIngredientId())
                 .orElseThrow(() -> new RestApiException(RefrigeratorIngredientErrorCode.NULL_REFRIGERATOR_INGREDIENT));
         User consumer = userRepository.findById(command.userId()).orElseThrow(() -> new RestApiException(UserErrorCode.NULL_USER));
+        double usedQuantity = prevIngredient.getQuantity() - command.quantity();
 
-        historyRepository.save(new History(consumer, prevIngredient));
+        historyRepository.save(new History(consumer, prevIngredient, usedQuantity));
     }
 }

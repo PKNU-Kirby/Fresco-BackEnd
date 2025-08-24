@@ -21,6 +21,6 @@ public record NaverResponse(
 
     @Override
     public String getName() {
-        return attributes.get("name").toString();
+        return attributes.get("ingredientName").toString();
     }
 }

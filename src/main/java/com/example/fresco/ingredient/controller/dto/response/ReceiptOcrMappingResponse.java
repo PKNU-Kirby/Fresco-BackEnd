@@ -7,9 +7,9 @@ import java.time.LocalDate;
 public record ReceiptOcrMappingResponse(
         @JsonProperty("input_name")
         String inputName,
-        Long ingredientId,
+        Short ingredientId,
         String ingredientName,
-        Long categoryId,
+        Short categoryId,
         String categoryName,
         LocalDate expirationDate
 ) {

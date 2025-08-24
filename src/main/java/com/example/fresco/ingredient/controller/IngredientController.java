@@ -7,7 +7,7 @@ import com.example.fresco.ingredient.controller.dto.request.IngredientFilterRequ
 import com.example.fresco.ingredient.controller.dto.request.SaveIngredientsRequest;
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientInfoRequest;
 import com.example.fresco.ingredient.controller.dto.response.AutoCompleteSearchResponse;
-import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
+import com.example.fresco.ingredient.controller.dto.response.RefrigeratorIngredientResponse;
 import com.example.fresco.ingredient.controller.dto.response.ReceiptOcrMappingResponse;
 import com.example.fresco.ingredient.service.IngredientService;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class IngredientController {
 
     // 식자재 조회
     @GetMapping("/{refrigeratorId}")
-    public SuccessResponse<PageResponse<IngredientResponse>> getAllIngredients(
+    public SuccessResponse<PageResponse<RefrigeratorIngredientResponse>> getAllIngredients(
             @PathVariable Long refrigeratorId,
             @ModelAttribute IngredientFilterRequest filterRequest
     ) {
@@ -39,7 +39,7 @@ public class IngredientController {
 
     // 식자재 업데이트
     @PutMapping("/{refrigeratorIngredientId}")
-    public SuccessResponse<IngredientResponse> updateIngredient(
+    public SuccessResponse<RefrigeratorIngredientResponse> updateIngredient(
             @PathVariable Long refrigeratorIngredientId,
             @RequestBody UpdateIngredientInfoRequest updateIngredientInfoRequest,
             @AuthenticationPrincipal Long userId
@@ -50,11 +50,11 @@ public class IngredientController {
 
     // 식자재 저장
     @PostMapping("/{refrigeratorId}")
-    public SuccessResponse<List<IngredientResponse>> saveIngredient(
+    public SuccessResponse<List<RefrigeratorIngredientResponse>> saveIngredient(
             @PathVariable Long refrigeratorId,
             @Valid @RequestBody SaveIngredientsRequest request) {
 
-        List<IngredientResponse> ingredients = ingredientService.saveIngredient(refrigeratorId, request);
+        List<RefrigeratorIngredientResponse> ingredients = ingredientService.saveIngredient(refrigeratorId, request);
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS, ingredients);
     }
 
@@ -73,7 +73,7 @@ public class IngredientController {
 
     // 식재료 사진으로 등록
     @PostMapping(value = "/scan-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public SuccessResponse<List<IngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
+    public SuccessResponse<List<RefrigeratorIngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
                 ingredientService.registerFromPhoto(ingredientImage));
     }

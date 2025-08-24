@@ -1,7 +1,7 @@
 package com.example.fresco.ingredient.service.util.dataClient;
 
 import com.example.fresco.ingredient.controller.dto.response.IngredientListResponse;
-import com.example.fresco.ingredient.controller.dto.response.IngredientResponse;
+import com.example.fresco.ingredient.controller.dto.response.RefrigeratorIngredientResponse;
 import com.example.fresco.ingredient.controller.dto.response.ReceiptMatchListResponse;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -74,7 +74,7 @@ public class DataApiClient {
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .bodyValue(formData)
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<List<IngredientResponse>>() {
+                    .bodyToMono(new ParameterizedTypeReference<List<RefrigeratorIngredientResponse>>() {
                     })
                     .map(IngredientListResponse::new)
                     .timeout(Duration.ofSeconds(30))

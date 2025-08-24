@@ -7,16 +7,16 @@ import java.util.List;
 public record ReceiptMatchListResponse(
         List<ReceiptMatchResponse> receiptMatchList
 ) {
-    public List<Long> getIngredientIds() {
+    public List<Short> getIngredientIds() {
         return receiptMatchList.stream().map(matchInfo -> matchInfo.ingredientId).toList();
     }
 
     public record ReceiptMatchResponse(
             @JsonProperty("input_name")
             String inputName,
-            Long ingredientId,
+            Short ingredientId,
             String ingredientName,
-            Long categoryId,
+            Short categoryId,
             String categoryName
     ) {
     }

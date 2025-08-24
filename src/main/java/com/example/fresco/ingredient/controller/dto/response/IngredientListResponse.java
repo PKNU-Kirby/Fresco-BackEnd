@@ -5,22 +5,23 @@ import java.util.List;
 import java.util.Map;
 
 public record IngredientListResponse(
-        List<IngredientResponse> imageList
+        List<RefrigeratorIngredientResponse> imageList
 ) {
-    public static List<IngredientResponse> getIngredientResponseWithExpirationDate(
-            List<IngredientResponse> ingredientList, Map<Long, LocalDate> expirationDateMap) {
+    public static List<RefrigeratorIngredientResponse> getIngredientResponseWithExpirationDate(
+            List<RefrigeratorIngredientResponse> ingredientList, Map<Short, LocalDate> expirationDateMap) {
         return ingredientList.stream()
-                .map(ingredient -> new IngredientResponse(
+                .map(ingredient -> new RefrigeratorIngredientResponse(
+                        ingredient.id(),
                         ingredient.ingredientId(),
-                        ingredient.ingredientName(),
                         ingredient.categoryId(),
-                        ingredient.categoryName(),
-                        expirationDateMap.get(ingredient.ingredientId())
+                        ingredient.ingredientName(),
+                        expirationDateMap.get(ingredient.ingredientId()),
+                        ingredient.quantity()
                 ))
                 .toList();
     }
 
-    public List<Long> getIngredientIds() {
-        return imageList.stream().map(IngredientResponse::ingredientId).toList();
+    public List<Short> getIngredientIds() {
+        return imageList.stream().map(RefrigeratorIngredientResponse::ingredientId).toList();
     }
 }
