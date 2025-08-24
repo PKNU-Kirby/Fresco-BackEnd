@@ -28,11 +28,6 @@ public class GroceryItem extends BaseEntity {
 
     private Boolean purchased;
 
-    public GroceryItem(String name, Boolean purchased) {
-        this.name = name;
-        this.purchased = purchased;
-    }
-
     public void updateName(String newName) {
         this.name = newName;
     }
