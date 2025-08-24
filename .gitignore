@@ -37,3 +37,6 @@ out/
 .vscode/
 
 **/src/main/resources/application-secret.yml
+
+### FCM json secret key ###
+**/src/main/resources/firebase/serviceAccountKey.json

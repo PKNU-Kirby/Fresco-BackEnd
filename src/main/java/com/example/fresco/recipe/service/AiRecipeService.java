@@ -20,9 +20,9 @@ import com.example.fresco.refrigerator.domain.repository.RefrigeratorIngredientR
 import com.example.fresco.user.domain.User;
 import com.example.fresco.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class AiRecipeService {
 
 
     @Transactional
-    public RecipeDetailResponse saveFromOpenAi(Long userId, OpenAiRecipeDto dto){
+    public RecipeDetailResponse saveFromOpenAi(Long userId, OpenAiRecipeDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(AuthErrorCode.NULL_USER));
 
@@ -115,7 +115,6 @@ public class AiRecipeService {
             if (ingredientName == null || ingredientName.isEmpty()) {
                 throw new RestApiException(IngredientErrorCode.NULL_INGREDIENT);
             }
-
 
 
             Ingredient ingredient = ingredientRepository.findByName(ingredientName)

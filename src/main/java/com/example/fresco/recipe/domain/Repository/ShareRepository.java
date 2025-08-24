@@ -17,9 +17,9 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
     void deleteByRefrigeratorIdAndRecipeId(Long refrigeratorId, Long recipeId);
 
     @Query("""
-        select s.recipe
-          from Share s
-         where s.refrigerator.id = :refrigeratorId
-    """)
+                select s.recipe
+                  from Share s
+                 where s.refrigerator.id = :refrigeratorId
+            """)
     List<Recipe> findRecipesByRefrigeratorId(@Param("refrigeratorId") Long refrigeratorId);
 }

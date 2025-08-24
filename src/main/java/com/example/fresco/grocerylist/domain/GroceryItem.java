@@ -2,7 +2,9 @@ package com.example.fresco.grocerylist.domain;
 
 import com.example.fresco.global.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter

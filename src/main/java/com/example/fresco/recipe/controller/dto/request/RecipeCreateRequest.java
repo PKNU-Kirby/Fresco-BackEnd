@@ -7,10 +7,11 @@ public record RecipeCreateRequest(
         List<RecipeIngredients> ingredients,
         String steps,
         String url
-){
-        public record RecipeIngredients (
-                String ingredientName,
-                Double quantity,
-                String unit
-        ){}
+) {
+    public record RecipeIngredients(
+            String ingredientName,
+            Double quantity,
+            String unit
+    ) {
+    }
 }

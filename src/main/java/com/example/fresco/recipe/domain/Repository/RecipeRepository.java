@@ -12,14 +12,14 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("""
-    select distinct r
-    from Recipe r
-    left join RecipeIngredient ri on ri.recipe = r
-    left join Ingredient i on ri.ingredient = i
-    where r.title like concat('%', :w, '%')
-       or r.steps like concat('%', :w, '%')
-       or i.name  like concat('%', :w, '%')
-    """)
+            select distinct r
+            from Recipe r
+            left join RecipeIngredient ri on ri.recipe = r
+            left join Ingredient i on ri.ingredient = i
+            where r.title like concat('%', :w, '%')
+               or r.steps like concat('%', :w, '%')
+               or i.name  like concat('%', :w, '%')
+            """)
     List<Recipe> searchAll(@Param("w") String w);
 
 }

@@ -38,6 +38,13 @@ public class RefrigeratorIngredient extends BaseEntity {
 
     private Double quantity = 0.0;
 
+    public RefrigeratorIngredient(Refrigerator refrigerator, Ingredient ingredient, Category category, LocalDate expirationDate) {
+        this.refrigerator = refrigerator;
+        this.ingredient = ingredient;
+        this.category = category;
+        this.expirationDate = expirationDate;
+    }
+
     public void updateExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }

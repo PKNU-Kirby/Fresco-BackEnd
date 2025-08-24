@@ -12,12 +12,12 @@ public record StockResponse(
 ) {
     public static List<StockResponse> fromRefrigeratorIngredient(List<RefrigeratorIngredient> stocks) {
         return stocks.stream()
-                        .map(ri -> new StockResponse(
-                                ri.getId(),
-                                ri.getIngredient().getName(),
-                                ri.getQuantity(),
-                                ri.getUnit()
-                        ))
-                        .toList();
+                .map(ri -> new StockResponse(
+                        ri.getId(),
+                        ri.getIngredient().getName(),
+                        ri.getQuantity(),
+                        ri.getUnit()
+                ))
+                .toList();
     }
 }

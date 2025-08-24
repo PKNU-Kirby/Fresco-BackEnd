@@ -2,15 +2,14 @@ package com.example.fresco.grocerylist.service;
 
 import com.example.fresco.global.exception.RestApiException;
 import com.example.fresco.global.response.error.GroceryListErrorCode;
-import com.example.fresco.grocerylist.domain.GroceryItem;
-import com.example.fresco.grocerylist.domain.GroceryList;
 import com.example.fresco.grocerylist.controller.dto.request.GroceryItemDeleteDtoRequest;
 import com.example.fresco.grocerylist.controller.dto.request.GroceryItemDtoRequest;
 import com.example.fresco.grocerylist.controller.dto.request.GroceryItemUpdateDtoRequest;
 import com.example.fresco.grocerylist.controller.dto.response.GroceryListDtoResponse;
-import com.example.fresco.grocerylist.domain.repository.GroceryListRepository;
+import com.example.fresco.grocerylist.domain.GroceryItem;
+import com.example.fresco.grocerylist.domain.GroceryList;
 import com.example.fresco.grocerylist.domain.repository.GroceryItemRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.fresco.grocerylist.domain.repository.GroceryListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,7 @@ public class GroceryService {
     public GroceryListDtoResponse updateItems(Long groceryListId, List<GroceryItemUpdateDtoRequest> dtos) {
         for (GroceryItemUpdateDtoRequest dto : dtos) {
             GroceryItem item = groceryItemRepository.findById(dto.id())
-                    .orElseThrow(() -> new EntityNotFoundException("Item not found: " + dto.id()));
+                    .orElseThrow(() -> new RestApiException(GroceryListErrorCode.ITEM_NOT_FOUND));
 
             if (dto.name() != null) item.updateName(dto.name());
             if (dto.quantity() != null) item.updateQuantity(dto.quantity());

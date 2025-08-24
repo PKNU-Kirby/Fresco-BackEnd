@@ -10,16 +10,18 @@ import com.example.fresco.ingredient.domain.repository.CategoryRepository;
 import com.example.fresco.ingredient.domain.repository.IngredientRepository;
 import com.example.fresco.recipe.controller.dto.request.CookingRequest;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
-import com.example.fresco.recipe.controller.dto.request.StockRequest;
 import com.example.fresco.recipe.controller.dto.response.CookingResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeDetailResponse;
 import com.example.fresco.recipe.controller.dto.response.RecipeListResponse;
 import com.example.fresco.recipe.controller.dto.response.StockResponse;
-import com.example.fresco.recipe.domain.*;
+import com.example.fresco.recipe.domain.FavoritesRecipe;
+import com.example.fresco.recipe.domain.Recipe;
+import com.example.fresco.recipe.domain.RecipeIngredient;
 import com.example.fresco.recipe.domain.Repository.FavoriteRepository;
 import com.example.fresco.recipe.domain.Repository.RecipeIngredientRepository;
 import com.example.fresco.recipe.domain.Repository.RecipeRepository;
 import com.example.fresco.recipe.domain.Repository.ShareRepository;
+import com.example.fresco.recipe.domain.Share;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorIngredientRepository;
@@ -129,7 +131,7 @@ public class RecipeService {
     }
 
     @Transactional
-    public RecipeDetailResponse replaceRecipe(Long recipeId,RecipeCreateRequest request, Long userId){
+    public RecipeDetailResponse replaceRecipe(Long recipeId, RecipeCreateRequest request, Long userId) {
 
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RestApiException(RecipeErrorCode.RECIPE_NOT_FOUND));
@@ -277,8 +279,8 @@ public class RecipeService {
                 .orElseThrow(() -> new RestApiException(RefrigeratorErrorCode.NULL_REFRIGERATOR));
 
         List<String> recipeIngredientNames = req.recipeIngredients().stream()
-                        .map(CookingRequest.Item::ingredientName)
-                        .toList();
+                .map(CookingRequest.Item::ingredientName)
+                .toList();
 
         List<RefrigeratorIngredient> stocks =
                 refrigeratorIngredientRepository.findAllByRefrigeratorIdAndIngredientNames(req.refrigeratorId(), recipeIngredientNames);
@@ -292,25 +294,25 @@ public class RecipeService {
 
         //차감 로직
         List<RefrigeratorIngredient> remainStocks = stocks.stream()
-                                .peek(stock -> {
-                                    String name = stock.getIngredient().getName();
-                                    CookingRequest.Item item = reqMap.get(name);
+                .peek(stock -> {
+                    String name = stock.getIngredient().getName();
+                    CookingRequest.Item item = reqMap.get(name);
 
-                                    BigDecimal before = BigDecimal.valueOf(stock.getQuantity())
-                                            .setScale(1, RoundingMode.HALF_UP);
+                    BigDecimal before = BigDecimal.valueOf(stock.getQuantity())
+                            .setScale(1, RoundingMode.HALF_UP);
 
-                                    // 차감량 = 전체수량 × percent / 100
-                                    BigDecimal used = BigDecimal.valueOf(item.quantity())
-                                            .multiply(BigDecimal.valueOf(item.percent()))
-                                            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
-                                            .setScale(1, RoundingMode.HALF_UP);
+                    // 차감량 = 전체수량 × percent / 100
+                    BigDecimal used = BigDecimal.valueOf(item.quantity())
+                            .multiply(BigDecimal.valueOf(item.percent()))
+                            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
+                            .setScale(1, RoundingMode.HALF_UP);
 
-                                    BigDecimal after = before.subtract(used);
-                                    if (after.compareTo(BigDecimal.ZERO) < 0) after = BigDecimal.ZERO;
+                    BigDecimal after = before.subtract(used);
+                    if (after.compareTo(BigDecimal.ZERO) < 0) after = BigDecimal.ZERO;
 
-                                    stock.updateQuantity(after.doubleValue());
-                                })
-                                .toList();
+                    stock.updateQuantity(after.doubleValue());
+                })
+                .toList();
 
         refrigeratorIngredientRepository.saveAll(remainStocks);
 
@@ -345,7 +347,7 @@ public class RecipeService {
         historyRepository.saveAll(histories);
 
 
-        return new CookingResponse(req.refrigeratorId(),userId,result);
+        return new CookingResponse(req.refrigeratorId(), userId, result);
     }
 
     @Transactional(readOnly = true)

@@ -3,9 +3,8 @@ package com.example.fresco.recipe.controller;
 import com.example.fresco.global.response.SuccessResponse;
 import com.example.fresco.global.response.success.RecipeSuccessCode;
 import com.example.fresco.recipe.controller.dto.request.CookingRequest;
-import com.example.fresco.recipe.controller.dto.request.StockRequest;
-import com.example.fresco.recipe.controller.dto.response.*;
 import com.example.fresco.recipe.controller.dto.request.RecipeCreateRequest;
+import com.example.fresco.recipe.controller.dto.response.*;
 import com.example.fresco.recipe.service.AiRecipeService;
 import com.example.fresco.recipe.service.RecipeService;
 import jakarta.validation.Valid;
@@ -80,7 +79,7 @@ public class RecipeController {
     public SuccessResponse<RecipeDetailResponse> replaceRecipe(
             @PathVariable Long recipeId,
             @AuthenticationPrincipal Long userId,
-            @RequestBody @Valid RecipeCreateRequest request){
+            @RequestBody @Valid RecipeCreateRequest request) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_UPDATE_SUCCESS,
                 recipeService.replaceRecipe(recipeId, request, userId));
     }
@@ -91,7 +90,7 @@ public class RecipeController {
             @PathVariable List<Long> recipeId,
             @AuthenticationPrincipal Long userId) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_DELETE_SUCCESS,
-        recipeService.deleteRecipes(recipeId, userId));
+                recipeService.deleteRecipes(recipeId, userId));
     }
 
     //레시피 즐겨찾기 설정
@@ -144,9 +143,9 @@ public class RecipeController {
     public SuccessResponse<List<StockResponse>> getRecipeIngredientStocks(
             @PathVariable Long refrigeratorId,
             @RequestParam List<String> recipeIngredientNames
-    ){
+    ) {
         return SuccessResponse.of(RecipeSuccessCode.RECIPE_FAVORITE_LIST_SUCCESS,
-                                    recipeService.getRefrigeratorIngredientStocks(refrigeratorId, recipeIngredientNames));
+                recipeService.getRefrigeratorIngredientStocks(refrigeratorId, recipeIngredientNames));
     }
 
     //조리하기 식재료 차감

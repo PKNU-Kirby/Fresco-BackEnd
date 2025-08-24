@@ -4,4 +4,5 @@ import java.util.List;
 
 public record GroceryItemDeleteDtoRequest(
         List<Long> itemIds
-) {}
+) {
+}

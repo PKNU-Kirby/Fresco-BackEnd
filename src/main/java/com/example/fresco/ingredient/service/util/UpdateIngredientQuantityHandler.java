@@ -1,6 +1,7 @@
 package com.example.fresco.ingredient.service.util;
 
 import com.example.fresco.ingredient.controller.dto.request.UpdateIngredientConditionCommand;
+import com.example.fresco.ingredient.service.util.update.UpdateIngredientConditionHandler;
 import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
 import org.springframework.stereotype.Service;
 

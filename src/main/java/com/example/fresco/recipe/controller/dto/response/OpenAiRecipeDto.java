@@ -7,7 +7,10 @@ public record OpenAiRecipeDto(
         List<Item> ingredients,
         List<String> steps,
         List<Substitution> substitutions
-){
-    public record Item(String ingredientName, Double quantity, String unit) {}
-    public record Substitution (String original, String substitute) {}
+) {
+    public record Item(String ingredientName, Double quantity, String unit) {
+    }
+
+    public record Substitution(String original, String substitute) {
+    }
 }

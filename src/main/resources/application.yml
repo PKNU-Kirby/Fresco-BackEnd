@@ -38,7 +38,7 @@ spring:
 
   ai:
     openai:
-      api-key : ${OPENAI.API.KEY}
+      api-key: ${OPENAI.API.KEY}
       chat:
         options:
           model: gpt-4o
@@ -53,11 +53,29 @@ spring:
     aws:
       region:
         static: ap-northeast-2
+      ssm:
+        firebase-parameter: /firebase/service-account-dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/fresco?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${mysql.username}
+    password: ${mysql.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG                       # 생성된 SQL
-    org.hibernate.orm.jdbc.bind: TRACE             # 바인딩 값 (Hibernate 6)
-    org.hibernate.type.descriptor.jdbc: TRACE      # 타입 변환 디버그
-    org.hibernate.boot.model.naming: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.tool.schema: DEBUG
+    com.example.fresco: DEBUG

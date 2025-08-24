@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record HistoryResponse(
         Long consumerId,
         String consumerName,
+        Short ingredientId,
         String ingredientName,
         Double usedQuantity,
         LocalDateTime usedAt

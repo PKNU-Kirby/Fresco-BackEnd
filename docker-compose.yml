@@ -4,7 +4,7 @@ services:
     image: taeyoungkims/fresco:latest
     container_name: backend
     ports:
-      - "80:8080"
+      - "8080:8080"
     volumes:
       - logs:/app/logs
       - ./src:/app/src
@@ -15,8 +15,7 @@ services:
       - spring.profiles.active=dev
 
     restart: unless-stopped
-    networks:
-      - fresco-network
+    network_mode: "host"
 
 volumes:
   logs:

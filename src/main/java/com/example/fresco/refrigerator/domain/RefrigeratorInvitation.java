@@ -7,10 +7,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Table(name = "refrigeratorInvitation")
+@Table(name = "refrigeratorinvitations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefrigeratorInvitation {

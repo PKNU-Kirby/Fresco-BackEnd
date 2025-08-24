@@ -6,4 +6,5 @@ public record GroceryItemUpdateDtoRequest(
         String name,
         Integer quantity,
         Boolean purchased
-) {}
+) {
+}

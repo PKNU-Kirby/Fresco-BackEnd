@@ -7,7 +7,7 @@ public record GroceryItemDtoResponse(
         String name,
         Integer quantity,
         Boolean purchased
-){
+) {
     public static GroceryItemDtoResponse itemDto(GroceryItem item) {
         return new GroceryItemDtoResponse(
                 item.getId(),
