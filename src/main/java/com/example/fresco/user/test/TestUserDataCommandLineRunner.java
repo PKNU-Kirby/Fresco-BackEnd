@@ -1,7 +1,10 @@
 package com.example.fresco.user.test;
 
 import com.example.fresco.auth.domain.Provider;
+import com.example.fresco.user.domain.DeviceType;
 import com.example.fresco.user.domain.User;
+import com.example.fresco.user.domain.UserFcmToken;
+import com.example.fresco.user.domain.repository.UserFcmTokenRepository;
 import com.example.fresco.user.domain.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -15,6 +18,9 @@ public class TestUserDataCommandLineRunner implements CommandLineRunner {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserFcmTokenRepository userFcmTokenRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -22,11 +28,12 @@ public class TestUserDataCommandLineRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         entityManager.createNativeQuery("DELETE FROM refreshtokens").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM userFcmTokens").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM users").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE users AUTO_INCREMENT = 1").executeUpdate();
 
-        User testUser = new User(Provider.NAVER, "PROVIDER_ID", "테스트123", "fcmToken");
-        userRepository.save(testUser);
+        User testUser = userRepository.save(new User(Provider.NAVER, "PROVIDER_ID", "테스트123"));
+        userFcmTokenRepository.save(new UserFcmToken(testUser, "fcmToken", DeviceType.ANDROID, true));
     }
 }
 

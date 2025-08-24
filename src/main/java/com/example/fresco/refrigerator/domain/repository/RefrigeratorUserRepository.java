@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,13 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
             "where ru.refrigerator.id = :refrigeratorId " +
             "order by ru.createdDate asc")
     List<RefrigeratorGroupMemberResponse> findAllUsersByRefrigeratorId(Long refrigeratorId);
+
+    @Query(
+            "select distinct ru.user.id " +
+                    "from RefrigeratorUser ru " +
+                    "join RefrigeratorIngredient ri " +
+                    "on ru.refrigerator = ri.refrigerator " +
+                    "where ri.expirationDate between current_date and :daysLater"
+    )
+    List<Long> findExpiringIngredientsWithinDays(LocalDate daysLater);
 }

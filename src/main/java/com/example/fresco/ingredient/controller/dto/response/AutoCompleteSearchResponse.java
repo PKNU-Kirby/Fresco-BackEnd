@@ -16,11 +16,11 @@ public record AutoCompleteSearchResponse(
         List<AutoCompleteSearchResponse> result = new ArrayList<>();
         for (Object[] match : similarMatches) {
             result.add(AutoCompleteSearchResponse.builder()
-                            .ingredientId((Long) match[0])
-                            .ingredientName((String)match[1])
-                            .categoryId((Long) match[2])
-                            .categoryName((String)match[3])
-                            .build()
+                    .ingredientId((Long) match[0])
+                    .ingredientName((String) match[1])
+                    .categoryId((Long) match[2])
+                    .categoryName((String) match[3])
+                    .build()
             );
         }
         return result;

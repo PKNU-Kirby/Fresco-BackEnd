@@ -15,8 +15,7 @@ services:
       - spring.profiles.active=dev
 
     restart: unless-stopped
-    networks:
-      - fresco-network
+    network_mode: "host"
 
 volumes:
   logs:
