@@ -16,8 +16,8 @@ public record RefrigeratorInvitationResponse(
                 .refrigeratorInvitationId(refrigeratorInvitation.getId())
                 .refrigeratorId(refrigeratorInvitation.getId())
                 .refrigeratorName(refrigeratorInvitation.getRefrigerator().getName())
-                .inviterId(refrigeratorInvitation.getInvitee().getId())
-                .inviterName(refrigeratorInvitation.getInvitee().getName())
+                .inviterId(refrigeratorInvitation.getInviter().getId())
+                .inviterName(refrigeratorInvitation.getInviter().getName())
                 .build();
     }
 }

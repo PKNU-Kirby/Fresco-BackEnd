@@ -20,7 +20,7 @@ public class NaverApiClient {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                 })
-                .map(NaverResponse::new)
+                .map(attributes -> new NaverResponse((Map<String, String>) attributes.get("response")))
                 .block();
     }
 }

@@ -30,12 +30,15 @@ public class TestUserDataCommandLineRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         entityManager.createNativeQuery("DELETE FROM refreshtokens").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM userFcmTokens").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM refrigeratorinvitations").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM userfcmtokens").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM users").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE users AUTO_INCREMENT = 1").executeUpdate();
 
-        User testUser = userRepository.save(new User(Provider.NAVER, "PROVIDER_ID", "테스트123", "testFcmToken"));
-        userFcmTokenRepository.save(new UserFcmToken(testUser, "fcmToken", DeviceType.ANDROID, true));
+        User inviter = userRepository.save(new User(Provider.NAVER, "PROVIDER_ID", "테스트1", "testFcmToken"));
+        User invitee = userRepository.save(new User(Provider.KAKAO, "PROVIDER_ID2", "테스트2", "testFcmToken2"));
+        userFcmTokenRepository.save(new UserFcmToken(inviter, "fcmToken", DeviceType.ANDROID, true));
+        userFcmTokenRepository.save(new UserFcmToken(invitee, "fcmToken2", DeviceType.ANDROID, true));
     }
 }
 

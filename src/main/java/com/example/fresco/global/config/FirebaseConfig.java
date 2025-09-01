@@ -27,7 +27,7 @@ public class FirebaseConfig {
     @Value("${spring.cloud.aws.region.static}")
     private String awsRegion;
 
-    @Value("${spring.cloud.aws.ssm.firebase-parameter}")
+    @Value("${spring.cloud.aws.parameter-store.firebase-parameter}")
     private String firebaseParameterName;
 
     @Value("${spring.profiles.active:local}")

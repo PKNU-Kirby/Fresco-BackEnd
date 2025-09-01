@@ -18,7 +18,7 @@ public interface RefrigeratorIngredientRepository extends JpaRepository<Refriger
             "join ri.ingredient i " +
             "where ri.refrigerator.id = :refrigeratorId and ri.category.id in(:categoryIds) "
     )
-    Page<RefrigeratorIngredientResponse> findByRefrigeratorIdAndCategoryIdIn(Long refrigeratorId, List<Long> categoryIds, Pageable pageable);
+    Page<RefrigeratorIngredientResponse> findByRefrigeratorIdAndCategoryIdIn(Long refrigeratorId, List<Short> categoryIds, Pageable pageable);
 
     @Query("""
                 select ri

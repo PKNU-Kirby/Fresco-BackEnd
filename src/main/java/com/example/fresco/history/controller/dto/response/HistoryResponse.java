@@ -9,17 +9,20 @@ import java.time.LocalDateTime;
 public record HistoryResponse(
         Long consumerId,
         String consumerName,
-        Short ingredientId,
+        Long refrigeratorIngredientId,
         String ingredientName,
         Double usedQuantity,
+        String unit,
         LocalDateTime usedAt
 ) {
     public static HistoryResponse from(History history) {
         return HistoryResponse.builder()
                 .consumerId(history.getUser().getId())
                 .consumerName(history.getUser().getName())
+                .refrigeratorIngredientId(history.getRefrigeratorIngredient().getId())
                 .ingredientName(history.getRefrigeratorIngredient().getIngredient().getName())
                 .usedQuantity(history.getUsedQuantity())
+                .unit(history.getRefrigeratorIngredient().getUnit())
                 .usedAt(history.getCreatedDate())
                 .build();
     }

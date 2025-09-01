@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class IngredientFilterRequest {
-    private List<Long> categoryIds;
+    private List<Short> categoryIds;
     private String sort;
     private Integer page;
     private Integer size;

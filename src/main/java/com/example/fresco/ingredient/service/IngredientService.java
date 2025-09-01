@@ -101,6 +101,8 @@ public class IngredientService {
                             refrigerator,
                             ingredient,
                             ingredient.getCategory(),
+                            info.quantity(),
+                            info.unit(),
                             info.expirationDate()
                     );
                 })

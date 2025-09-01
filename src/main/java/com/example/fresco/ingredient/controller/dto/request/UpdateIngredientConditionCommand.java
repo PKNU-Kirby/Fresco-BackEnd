@@ -10,8 +10,8 @@ public record UpdateIngredientConditionCommand(
         Long userId,
         @NonNull
         Long refrigeratorIngredientId,
-        String name,
-        LocalDate expirationDate,
-        Double quantity
+        Double quantity,
+        String unit,
+        LocalDate expirationDate
 ) {
 }

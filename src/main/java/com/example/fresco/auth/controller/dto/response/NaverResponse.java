@@ -7,7 +7,7 @@ import java.util.Map;
 
 public record NaverResponse(
         @NotNull(message = "null이면 안 됩니다.")
-        Map<String, Object> attributes) implements SocialResponse {
+        Map<String, String> attributes) implements SocialResponse {
 
     @Override
     public Provider getProvider() {
@@ -16,11 +16,11 @@ public record NaverResponse(
 
     @Override
     public String getProviderId() {
-        return attributes.get("id").toString();
+        return attributes.get("id");
     }
 
     @Override
     public String getName() {
-        return attributes.get("ingredientName").toString();
+        return attributes.get("ingredientName");
     }
 }

@@ -3,7 +3,7 @@ package com.example.fresco.ingredient.controller.dto.request;
 import java.time.LocalDate;
 
 public record UpdateIngredientInfoRequest(
-        String name,
+        String unit,
         LocalDate expirationDate,
         Double quantity
 ) {
@@ -11,9 +11,9 @@ public record UpdateIngredientInfoRequest(
         return new UpdateIngredientConditionCommand(
                 userId,
                 refrigeratorIngredientId,
-                name,
-                expirationDate,
-                quantity
+                quantity,
+                unit,
+                expirationDate
         );
     }
 }

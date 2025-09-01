@@ -21,7 +21,7 @@ public class HistoryController {
 
     @GetMapping
     public SuccessResponse<PageResponse<HistoryResponse>> getAllHistoryResponse(
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return SuccessResponse.of(HistorySuccessCode.GET_HISTORY_SUCCESS,
                 historyService.getAllHistory(pageable));

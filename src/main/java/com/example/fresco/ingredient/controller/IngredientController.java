@@ -55,7 +55,7 @@ public class IngredientController {
             @Valid @RequestBody SaveIngredientsRequest request) {
 
         List<RefrigeratorIngredientResponse> ingredients = ingredientService.saveIngredient(refrigeratorId, request);
-        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS, ingredients);
+        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_SAVE_SUCCESS, ingredients);
     }
 
     // 영수증으로 등록
@@ -67,14 +67,13 @@ public class IngredientController {
         List<ReceiptOcrMappingResponse> result = ingredientService.registerFromReceipt(receiptImage);
         long endTime = System.currentTimeMillis();
         log.info("종료 시간 : {}", endTime);
-        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
-                result);
+        return SuccessResponse.of(IngredientSuccessCode.RECEIPT_EXTRACT_SUCCESS, result);
     }
 
     // 식재료 사진으로 등록
     @PostMapping(value = "/scan-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public SuccessResponse<List<RefrigeratorIngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
-        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
+        return SuccessResponse.of(IngredientSuccessCode.PHOTO_EXTRACT_SUCCESS,
                 ingredientService.registerFromPhoto(ingredientImage));
     }
 
@@ -83,7 +82,7 @@ public class IngredientController {
     public SuccessResponse<List<AutoCompleteSearchResponse>> getAllIngredients(
             @RequestParam String keyword
     ) {
-        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_LIST_SUCCESS,
+        return SuccessResponse.of(IngredientSuccessCode.AUTO_COMPLETE_RESEARCH_SUCCESS,
                 ingredientService.searchAutoComplete(keyword));
     }
 }
