@@ -12,6 +12,7 @@ import com.example.fresco.refrigerator.controller.dto.request.refrigerator.Updat
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.RefrigeratorUser;
+import com.example.fresco.refrigerator.domain.repository.RefrigeratorInvitationRepository;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorRepository;
 import com.example.fresco.refrigerator.domain.repository.RefrigeratorUserRepository;
 import com.example.fresco.user.domain.User;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @Validated
@@ -37,7 +38,7 @@ public class RefrigeratorService {
 
     @Transactional
     public RefrigeratorInfoResponse createRefrigerator(@Valid CreateRefrigeratorRequest request) {
-        Refrigerator savedRefrigerator = refrigeratorRepository.save(new Refrigerator(request.name()));
+        Refrigerator savedRefrigerator = refrigeratorRepository.save(new Refrigerator(request.name(), request.userId()));
         GroceryList savedGroceryList = saveGroceryList(savedRefrigerator);
         log.info("userId : {}", request.userId());
         User user = userRepository.findById(request.userId())
@@ -81,5 +82,19 @@ public class RefrigeratorService {
                 .totalAmount(0)
                 .build();
         return groceryListRepository.save(groceryList);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<Long, Boolean> getEditableMapByUser(Long userId) {
+        List<Long> refrigeratorIds = refrigeratorUserRepository.findRefrigeratorIdsByUserId(userId);
+        List<Long> ownedIds = refrigeratorRepository.findIdsByCreatorAndIds(userId, refrigeratorIds);
+
+        Set<Long> editableIds = new HashSet<>(ownedIds);
+
+        Map<Long, Boolean> result = new LinkedHashMap<>();
+        for (Long id : refrigeratorIds) {
+            result.put(id, editableIds.contains(id));
+        }
+        return result;
     }
 }

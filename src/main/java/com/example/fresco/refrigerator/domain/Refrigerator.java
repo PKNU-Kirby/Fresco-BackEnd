@@ -15,10 +15,9 @@ public class Refrigerator extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Long creator;
 
-    public Refrigerator(String name) {
-        this.name = name;
-    }
+    public Refrigerator(String name, Long creator) { this.name = name;  this.creator = creator; }
 
     public void changeName(String name) {
         this.name = name;
