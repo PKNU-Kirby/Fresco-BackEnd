@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/refrigerator")
@@ -49,5 +50,13 @@ public class RefrigeratorController {
     ) {
         return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
                 refrigeratorService.getAllRefrigerator(new GetAllRefrigeratorRequest(userId)));
+    }
+
+    @GetMapping("/permissions")
+    public SuccessResponse<Map<Long, Boolean>> getPermissionRefrigerator(
+            @AuthenticationPrincipal Long userId
+    ){
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_PERMISSION_SUCCESS,
+                refrigeratorService.getEditableMapByUser(userId));
     }
 }

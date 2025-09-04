@@ -42,4 +42,12 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
                     "where ri.expirationDate between current_date and :daysLater"
     )
     List<Long> findExpiringIngredientsWithinDays(LocalDate daysLater);
+
+    @Query("""
+        select r.id
+        from RefrigeratorUser ru
+            join ru.refrigerator r
+        where ru.user.id = :userId
+    """)
+    List<Long> findRefrigeratorIdsByUserId(Long userId);
 }
