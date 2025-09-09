@@ -9,6 +9,7 @@ import com.example.fresco.refrigerator.controller.dto.request.refrigerator.Creat
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.DeleteRefrigeratorRequest;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.GetAllRefrigeratorRequest;
 import com.example.fresco.refrigerator.controller.dto.request.refrigerator.UpdateRefrigeratorRequest;
+import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorEditableResponse;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.domain.Refrigerator;
 import com.example.fresco.refrigerator.domain.RefrigeratorUser;
@@ -87,13 +88,17 @@ public class RefrigeratorService {
     @Transactional(readOnly = true)
     public Map<Long, Boolean> getEditableMapByUser(Long userId) {
         List<Long> refrigeratorIds = refrigeratorUserRepository.findRefrigeratorIdsByUserId(userId);
-        List<Long> ownedIds = refrigeratorRepository.findIdsByCreatorAndIds(userId, refrigeratorIds);
 
-        Set<Long> editableIds = new HashSet<>(ownedIds);
+        if (refrigeratorIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<RefrigeratorEditableResponse> editableRows =
+                refrigeratorRepository.findEditableRowsByIds(refrigeratorIds, userId);
 
         Map<Long, Boolean> result = new LinkedHashMap<>();
-        for (Long id : refrigeratorIds) {
-            result.put(id, editableIds.contains(id));
+        for (RefrigeratorEditableResponse row : editableRows) {
+            result.put(row.refrigeratorId(), row.editable());
         }
         return result;
     }
