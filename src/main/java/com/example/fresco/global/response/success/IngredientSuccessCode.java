@@ -13,6 +13,7 @@ public enum IngredientSuccessCode implements SuccessCode {
     RECEIPT_EXTRACT_SUCCESS("INGREDIENT_OK_004", HttpStatus.OK, "영수증 정보 추출 성공"),
     PHOTO_EXTRACT_SUCCESS("INGREDIENT_OK_005", HttpStatus.OK, "식재료 사진 정보 추출 성공"),
     AUTO_COMPLETE_RESEARCH_SUCCESS("INGREDIENT_OK_006", HttpStatus.OK, "삭자재 자동 완성 검색 성공"),
+    INGREDIENT_DELETE_SUCCESS("INGREDIENT_OK_007", HttpStatus.OK, "삭자재 삭제 성공"),
     ;
 
     private final String code;

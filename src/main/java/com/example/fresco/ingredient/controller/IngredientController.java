@@ -85,4 +85,13 @@ public class IngredientController {
         return SuccessResponse.of(IngredientSuccessCode.AUTO_COMPLETE_RESEARCH_SUCCESS,
                 ingredientService.searchAutoComplete(keyword));
     }
+
+    // 식자재 삭제
+    @DeleteMapping
+    public SuccessResponse<String> deleteIngredients(
+            @RequestBody List<Long> refrigeratorIngredientsidList
+    ) {
+        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_DELETE_SUCCESS,
+                ingredientService.deleteIngredients(refrigeratorIngredientsidList));
+    }
 }
