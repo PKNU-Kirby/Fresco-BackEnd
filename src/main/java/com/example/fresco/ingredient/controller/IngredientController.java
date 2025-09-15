@@ -89,7 +89,7 @@ public class IngredientController {
     // 식자재 삭제
     @DeleteMapping
     public SuccessResponse<String> deleteIngredients(
-            @RequestBody List<Long> refrigeratorIngredientsidList
+            @RequestParam List<Long> refrigeratorIngredientsidList
     ) {
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_DELETE_SUCCESS,
                 ingredientService.deleteIngredients(refrigeratorIngredientsidList));
