@@ -1,11 +1,13 @@
 package com.example.fresco.refrigerator.domain.repository;
 
+import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorEditableResponse;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorGroupMemberResponse;
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
 import com.example.fresco.refrigerator.domain.RefrigeratorUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -42,4 +44,11 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
                     "where ri.expirationDate between current_date and :daysLater"
     )
     List<Long> findExpiringIngredientsWithinDays(LocalDate daysLater);
+
+    @Query("""
+        select ru.refrigerator.id
+        from RefrigeratorUser ru
+        where ru.user.id = :userId
+    """)
+    List<Long> findRefrigeratorIdsByUserId(@Param("userId") Long userId);
 }

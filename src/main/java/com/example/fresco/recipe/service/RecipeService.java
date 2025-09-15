@@ -115,9 +115,7 @@ public class RecipeService {
         Set<Long> favoriteIds = favoriteRepository.findAllRecipeIdsByUserId(userId);
 
         recipes.sort(
-                Comparator
-                        .comparing((Recipe r) -> !favoriteIds.contains(r.getId())) // false(즐겨찾기) 먼저
-                        .thenComparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
+                Comparator.comparing(Recipe::getCreatedDate, Comparator.nullsLast(Comparator.reverseOrder()))
         );
 
         // DTO 변환
