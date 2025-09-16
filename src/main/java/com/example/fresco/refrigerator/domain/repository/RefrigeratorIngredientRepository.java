@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface RefrigeratorIngredientRepository extends JpaRepository<RefrigeratorIngredient, Long> {
-    @Query("select new com.example.fresco.ingredient.controller.dto.response.RefrigeratorIngredientResponse(ri.id, ri.ingredient.id, ri.category.id, ri.ingredient.name, ri.expirationDate, ri.quantity) " +
+    @Query("select new com.example.fresco.ingredient.controller.dto.response.RefrigeratorIngredientResponse(ri.id, ri.ingredient.id, ri.category.id, ri.ingredient.name, ri.expirationDate, ri.quantity, ri.unit) " +
             "from RefrigeratorIngredient ri " +
             "join ri.ingredient i " +
             "where ri.refrigerator.id = :refrigeratorId and ri.category.id in(:categoryIds) "
