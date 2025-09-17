@@ -16,7 +16,8 @@ public record IngredientListResponse(
                         ingredient.categoryId(),
                         ingredient.ingredientName(),
                         expirationDateMap.get(ingredient.ingredientId()),
-                        ingredient.quantity()
+                        ingredient.quantity(),
+                        ingredient.unit()
                 ))
                 .toList();
     }
