@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String requestURI = request.getRequestURI();
-            log.info("JWT Filter - Processing request: {}", requestURI);
+            log.debug("JWT Filter - Processing request: {}", requestURI);
 
             if (shouldNotFilter(request)) {
                 log.debug("JWT Filter - Skipping authentication for: {}", requestURI);
