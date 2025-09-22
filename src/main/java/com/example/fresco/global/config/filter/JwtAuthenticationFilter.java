@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String requestURI = request.getRequestURI();
-            log.debug("JWT Filter - Processing request: {}", requestURI);
+            log.info("JWT Filter - Processing request: {}", requestURI);
 
             if (shouldNotFilter(request)) {
                 log.debug("JWT Filter - Skipping authentication for: {}", requestURI);
@@ -45,10 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("JWT Filter - Authorization header: {}", authHeader);
 
             String accessToken = jwtTokenProvider.extractAccessToken(request);
-            log.debug("JWT Filter - Extracted token: {}", accessToken != null ? "Present" : "Null");
+            log.info("JWT Filter - Extracted token: {}", accessToken != null ? "Present" : "Null");
 
             authenticateWithAccessToken(accessToken);
-            log.debug("JWT Filter - Authentication successful for: {}", requestURI);
+            log.info("JWT Filter - Authentication successful for: {}", requestURI);
 
             filterChain.doFilter(request, response);
         } catch (RestApiException ex) {
