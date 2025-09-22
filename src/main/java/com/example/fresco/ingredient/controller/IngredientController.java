@@ -73,6 +73,7 @@ public class IngredientController {
     // 식재료 사진으로 등록
     @PostMapping(value = "/scan-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public SuccessResponse<List<RefrigeratorIngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
+        log.info("scanPhoto endpoint called with file: {}", ingredientImage != null ? ingredientImage.getOriginalFilename() : "null");
         return SuccessResponse.of(IngredientSuccessCode.PHOTO_EXTRACT_SUCCESS,
                 ingredientService.registerFromPhoto(ingredientImage));
     }
