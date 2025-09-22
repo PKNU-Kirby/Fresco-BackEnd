@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -79,12 +81,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        return Map.of(
-                "errorCode", ex.getErrorCode().getDevelopCode(),
-                "errorDescription", ex.getErrorCode().getErrorDescription(),
-                "details", ex.getMessage(),
-                "errors", ex.getErrors()
-        );
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("errorCode", ex.getErrorCode().getDevelopCode());
+        errorResponse.put("errorDescription", ex.getErrorCode().getErrorDescription());
+        errorResponse.put("details", ex.getMessage() != null ? ex.getMessage() : "Unknown error");
+        errorResponse.put("errors", ex.getErrors() != null ? ex.getErrors() : new ArrayList<>());
+        return errorResponse;
     }
 
     @Override
