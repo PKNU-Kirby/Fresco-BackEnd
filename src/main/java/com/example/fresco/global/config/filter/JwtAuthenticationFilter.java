@@ -41,6 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            String authHeader = request.getHeader("Authorization");
+            log.debug("JWT Filter - Authorization header: {}", authHeader);
+
             String accessToken = jwtTokenProvider.extractAccessToken(request);
             log.debug("JWT Filter - Extracted token: {}", accessToken != null ? "Present" : "Null");
 
@@ -92,6 +95,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/login/test");
+        return path.startsWith("/api/v1/auth/login") ||
+               path.startsWith("/api/v1/login/test") ||
+               path.startsWith("/swagger-ui/") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-resources/");
     }
 }
