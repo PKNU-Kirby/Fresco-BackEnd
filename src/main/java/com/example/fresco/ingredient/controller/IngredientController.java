@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("ap1/v1/ingredient")
+@RequestMapping("api/v1/ingredient")
 @RequiredArgsConstructor
 @Slf4j
 public class IngredientController {
