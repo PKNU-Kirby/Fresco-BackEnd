@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final JwtTokenProvider jwtTokenProvider;
@@ -28,15 +30,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            String requestURI = request.getRequestURI();
+            log.debug("JWT Filter - Processing request: {}", requestURI);
+
             if (shouldNotFilter(request)) {
+                log.debug("JWT Filter - Skipping authentication for: {}", requestURI);
                 filterChain.doFilter(request, response);
                 return;
             }
 
             String accessToken = jwtTokenProvider.extractAccessToken(request);
+            log.debug("JWT Filter - Extracted token: {}", accessToken != null ? "Present" : "Null");
+
             authenticateWithAccessToken(accessToken);
+            log.debug("JWT Filter - Authentication successful for: {}", requestURI);
+
             filterChain.doFilter(request, response);
         } catch (RestApiException ex) {
+            log.error("JWT Filter - Authentication failed: {}", ex.getMessage());
             Map<String, Object> errorResponse = createErrorResponse(response, ex);
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
         } finally {
@@ -46,12 +57,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void authenticateWithAccessToken(String accessToken) {
         if (accessToken != null) {
+            log.debug("JWT Filter - Validating token");
+
             if (jwtTokenProvider.isExpiredToken(accessToken)) {
+                log.error("JWT Filter - Token is expired");
                 throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN, "만료된 토큰입니다.");
             }
 
+            log.debug("JWT Filter - Token is valid, authenticating");
             Authentication authentication = jwtAuthenticationProvider.authenticate(new JwtAuthenticationToken(accessToken));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("JWT Filter - Authentication set in SecurityContext");
+        } else {
+            log.error("JWT Filter - No access token provided");
+            throw new RestApiException(AuthErrorCode.INVALID_TOKEN, "토큰이 필요합니다.");
         }
     }
 
