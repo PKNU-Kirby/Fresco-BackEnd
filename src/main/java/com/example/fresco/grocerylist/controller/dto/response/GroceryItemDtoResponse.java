@@ -6,6 +6,7 @@ public record GroceryItemDtoResponse(
         Long id,
         String name,
         Integer quantity,
+        String unit,
         Boolean purchased
 ) {
     public static GroceryItemDtoResponse itemDto(GroceryItem item) {
@@ -13,6 +14,7 @@ public record GroceryItemDtoResponse(
                 item.getId(),
                 item.getName(),
                 item.getQuantity(),
+                item.getUnit(),
                 item.getPurchased()
         );
     }

@@ -31,6 +31,7 @@ public class GroceryService {
                 .name(dto.name())
                 .purchased(dto.purchased())
                 .quantity(dto.quantity())
+                .unit(dto.unit())
                 .groceryList(list)
                 .build();
 
@@ -52,6 +53,7 @@ public class GroceryService {
 
             if (dto.name() != null) item.updateName(dto.name());
             if (dto.quantity() != null) item.updateQuantity(dto.quantity());
+            if (dto.unit() != null) item.updateUnit(dto.unit());
             if (dto.purchased() != null) item.updatePurchased(dto.purchased());
         }
 
