@@ -43,8 +43,8 @@ spring:
         options:
           model: gpt-4o
           temperature: 0.9
-          frequency-penalty: 0.2
-          presence-penalty: 0.4
+          frequency-penalty: 0.7
+          presence-penalty: 0.5
 
   servlet:
     multipart:
