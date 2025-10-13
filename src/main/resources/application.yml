@@ -42,7 +42,9 @@ spring:
       chat:
         options:
           model: gpt-4o
-          temperature: 0.5
+          temperature: 0.9
+          frequency-penalty: 0.2
+          presence-penalty: 0.4
 
   servlet:
     multipart:
