@@ -181,7 +181,10 @@ public class RecipeService {
 
         toDelete.removeIf(r -> r.getUser() == null || !r.getUser().getId().equals(user.getId()));
 
+
         if (!toDelete.isEmpty()) {
+            List<Long> toDeleteRecipeIds = toDelete.stream().map(Recipe::getId).toList();
+            recipeIngredientRepository.deleteAllByRecipeIdIn(toDeleteRecipeIds);
             recipeRepository.deleteAllInBatch(toDelete);
         }
 
