@@ -2,9 +2,11 @@ package com.example.fresco.refrigerator.domain.repository;
 
 import com.example.fresco.ingredient.controller.dto.response.RefrigeratorIngredientResponse;
 import com.example.fresco.refrigerator.domain.RefrigeratorIngredient;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -40,4 +42,7 @@ public interface RefrigeratorIngredientRepository extends JpaRepository<Refriger
             """)
     List<RefrigeratorIngredient> findAllByRefrigeratorIdAndIngredientNames(
             Long refrigeratorId, List<String> ingredientNames);
+
+    @Modifying
+    void deleteAllByRefrigerator_Id(@NotNull Long aLong);
 }
