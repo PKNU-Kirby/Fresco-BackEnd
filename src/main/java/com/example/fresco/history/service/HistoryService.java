@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 public class HistoryService {
     private final HistoryRepository historyRepository;
 
-    public PageResponse<HistoryResponse> getAllHistory(Pageable pageable) {
-        Page<HistoryResponse> responsePage = historyRepository.findAll(pageable)
+    public PageResponse<HistoryResponse> getAllHistory(Long refrigeratorId, Pageable pageable) {
+        Page<HistoryResponse> responsePage = historyRepository.findAllByRefrigeratorIngredient_Refrigerator_Id(refrigeratorId, pageable)
                 .map(HistoryResponse::from);
 
         return new PageResponse<>(
