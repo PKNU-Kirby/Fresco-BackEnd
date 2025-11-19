@@ -79,7 +79,7 @@ public class JwtTokenProvider {
             Claims claims = getClaimsByToken(token);
             return claims.getExpiration().before(new Date());
         } catch (ExpiredJwtException e) {
-            return false;
+            return true;
         }
     }
 

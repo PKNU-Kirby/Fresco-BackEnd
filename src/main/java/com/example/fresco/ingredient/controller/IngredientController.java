@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("ap1/v1/ingredient")
+@RequestMapping("api/v1/ingredient")
 @RequiredArgsConstructor
 @Slf4j
 public class IngredientController {
@@ -73,6 +73,7 @@ public class IngredientController {
     // 식재료 사진으로 등록
     @PostMapping(value = "/scan-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public SuccessResponse<List<RefrigeratorIngredientResponse>> scanPhoto(@RequestParam("ingredientImage") MultipartFile ingredientImage) {
+        log.info("scanPhoto endpoint called with file: {}", ingredientImage != null ? ingredientImage.getOriginalFilename() : "null");
         return SuccessResponse.of(IngredientSuccessCode.PHOTO_EXTRACT_SUCCESS,
                 ingredientService.registerFromPhoto(ingredientImage));
     }
@@ -84,5 +85,14 @@ public class IngredientController {
     ) {
         return SuccessResponse.of(IngredientSuccessCode.AUTO_COMPLETE_RESEARCH_SUCCESS,
                 ingredientService.searchAutoComplete(keyword));
+    }
+
+    // 식자재 삭제
+    @DeleteMapping
+    public SuccessResponse<String> deleteIngredients(
+            @RequestParam List<Long> ids
+    ) {
+        return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_DELETE_SUCCESS,
+                ingredientService.deleteIngredients(ids));
     }
 }

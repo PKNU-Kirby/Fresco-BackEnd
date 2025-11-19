@@ -2,7 +2,9 @@ package com.example.fresco.refrigerator.domain.repository;
 
 import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInvitationResponse;
 import com.example.fresco.refrigerator.domain.RefrigeratorInvitation;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,7 @@ public interface RefrigeratorInvitationRepository extends JpaRepository<Refriger
             "from RefrigeratorInvitation rv join rv.refrigerator r join rv.inviter u " +
             "where rv.id = :refrigeratorInvitationId")
     Optional<RefrigeratorInvitationResponse> findInvitationInfoById(Long refrigeratorInvitationId);
+
+    @Modifying
+    void deleteByRefrigerator_Id(@NotNull Long aLong);
 }

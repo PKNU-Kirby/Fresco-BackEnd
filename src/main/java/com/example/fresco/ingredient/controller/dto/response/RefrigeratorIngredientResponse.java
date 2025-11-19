@@ -11,7 +11,8 @@ public record RefrigeratorIngredientResponse(
         Short categoryId,
         String ingredientName,
         LocalDate expirationDate,
-        Double quantity
+        Double quantity,
+        String unit
 ) {
     public static RefrigeratorIngredientResponse from(RefrigeratorIngredient refrigeratorIngredient) {
         return new RefrigeratorIngredientResponse(
@@ -20,7 +21,8 @@ public record RefrigeratorIngredientResponse(
                 refrigeratorIngredient.getCategory().getId(),
                 refrigeratorIngredient.getIngredient().getName(),
                 refrigeratorIngredient.getExpirationDate(),
-                refrigeratorIngredient.getQuantity()
+                refrigeratorIngredient.getQuantity(),
+                refrigeratorIngredient.getUnit()
         );
     }
 

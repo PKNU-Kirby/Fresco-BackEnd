@@ -217,4 +217,9 @@ public class IngredientService {
 
         historyRepository.save(new History(consumer, prevIngredient, usedQuantity));
     }
+
+    public String deleteIngredients(List<Long> refrigeratorIngredientsidList) {
+        refrigeratorIngredientRepository.deleteAllById(refrigeratorIngredientsidList);
+        return "성공적으로 삭제되었습니다.";
+    }
 }

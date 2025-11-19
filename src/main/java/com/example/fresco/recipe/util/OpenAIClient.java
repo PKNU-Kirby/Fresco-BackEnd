@@ -25,7 +25,7 @@ public class OpenAIClient {
                         new AssistantMessage("""
                                 {
                                   "title":"예시 볶음밥",
-                                  "ingredients":[{"ingredientName":"당근","quantity":"2.0","unit:개"}],
+                                  "ingredients":[{"ingredientName":"당근","quantity":"2.0","unit":"개"}],
                                   "steps":["1. 팬에 기름을 두른다 ..."],
                                   "substitutions":[{"original":"당근","substitute":"애호박"}]
                                 }

@@ -21,14 +21,17 @@ public class GroceryItem extends BaseEntity {
 
     private Integer quantity;
 
+    private String unit;
+
     private String name;
 
     private Boolean purchased;
 
     @Builder
-    public GroceryItem(GroceryList groceryList, Integer quantity, String name, Boolean purchased) {
+    public GroceryItem(GroceryList groceryList, Integer quantity, String unit, String name, Boolean purchased) {
         this.groceryList = groceryList;
         this.quantity = quantity;
+        this.unit = unit;
         this.name = name;
         this.purchased = purchased;
     }
@@ -43,5 +46,9 @@ public class GroceryItem extends BaseEntity {
 
     public void updateQuantity(Integer newQuantity) {
         this.quantity = newQuantity;
+    }
+
+    public void updateUnit(String unit) {
+        this.unit = unit;
     }
 }

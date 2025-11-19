@@ -12,7 +12,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "usernotificationsettings")
+@Table(name = "userNotificationSettings")
 public class UserNotificationSetting extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

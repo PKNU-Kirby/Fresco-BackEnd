@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "userfcmtokens")
+@Table(name = "userFcmTokens")
 public class UserFcmToken extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

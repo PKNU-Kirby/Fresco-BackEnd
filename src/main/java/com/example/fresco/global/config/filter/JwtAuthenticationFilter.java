@@ -11,16 +11,20 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final JwtTokenProvider jwtTokenProvider;
@@ -28,15 +32,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            String requestURI = request.getRequestURI();
+
             if (shouldNotFilter(request)) {
+                log.debug("JWT Filter - Skipping authentication for: {}", requestURI);
                 filterChain.doFilter(request, response);
                 return;
             }
 
             String accessToken = jwtTokenProvider.extractAccessToken(request);
             authenticateWithAccessToken(accessToken);
+
             filterChain.doFilter(request, response);
         } catch (RestApiException ex) {
+            log.error("JWT Filter - Authentication failed: {}", ex.getMessage());
             Map<String, Object> errorResponse = createErrorResponse(response, ex);
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
         } finally {
@@ -46,12 +55,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void authenticateWithAccessToken(String accessToken) {
         if (accessToken != null) {
+
             if (jwtTokenProvider.isExpiredToken(accessToken)) {
+                log.error("JWT Filter - Token is expired");
                 throw new RestApiException(AuthErrorCode.EXPIRED_TOKEN, "만료된 토큰입니다.");
             }
 
             Authentication authentication = jwtAuthenticationProvider.authenticate(new JwtAuthenticationToken(accessToken));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            log.error("JWT Filter - No access token provided");
+            throw new RestApiException(AuthErrorCode.INVALID_TOKEN, "토큰이 필요합니다.");
         }
     }
 
@@ -60,17 +74,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        return Map.of(
-                "errorCode", ex.getErrorCode().getDevelopCode(),
-                "errorDescription", ex.getErrorCode().getErrorDescription(),
-                "details", ex.getMessage(),
-                "errors", ex.getErrors()
-        );
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("errorCode", ex.getErrorCode().getDevelopCode());
+        errorResponse.put("errorDescription", ex.getErrorCode().getErrorDescription());
+        errorResponse.put("details", ex.getMessage() != null ? ex.getMessage() : "Unknown error");
+        errorResponse.put("errors", ex.getErrors() != null ? ex.getErrors() : new ArrayList<>());
+        return errorResponse;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/login/test");
+        return path.startsWith("/api/v1/auth/login") ||
+               path.startsWith("/api/v1/login/test") ||
+               path.startsWith("/swagger-ui/") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-resources/");
     }
 }

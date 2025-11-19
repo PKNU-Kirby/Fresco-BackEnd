@@ -6,6 +6,7 @@ public record GroceryItemDtoRequest(
         Long id,
         String name,
         Integer quantity,
+        String unit,
         Boolean purchased,
         Long groceryListId
 ) {
@@ -14,6 +15,7 @@ public record GroceryItemDtoRequest(
                 item.getId(),
                 item.getName(),
                 item.getQuantity(),
+                item.getUnit(),
                 item.getPurchased(),
                 item.getGroceryList().getId()
         );
