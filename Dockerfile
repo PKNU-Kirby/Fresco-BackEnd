@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM openjdk:17-jdk-slim AS builder
+FROM openjdk:17-jdk-alpine AS builder
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -23,7 +23,7 @@ COPY src /app/src
 RUN ./gradlew clean bootJar -x test --no-daemon
 
 # Stage 2: Run
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-alpine
 
 # 작업 디렉토리 설정
 WORKDIR /app
