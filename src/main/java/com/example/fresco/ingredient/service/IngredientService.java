@@ -77,8 +77,8 @@ public class IngredientService {
         RefrigeratorIngredient refrigeratorIngredient = refrigeratorIngredientRepository.findById(updateIngredientConditionCommand.refrigeratorIngredientId())
                 .orElseThrow(() -> new RestApiException(IngredientErrorCode.NULL_INGREDIENT));
 
-        updateIngredientConditionManager.updateContract(refrigeratorIngredient, updateIngredientConditionCommand);
         saveUsedHistory(updateIngredientConditionCommand);
+        updateIngredientConditionManager.updateContract(refrigeratorIngredient, updateIngredientConditionCommand);
         RefrigeratorIngredient savedIngredient = refrigeratorIngredientRepository.save(refrigeratorIngredient);
         return RefrigeratorIngredientResponse.from(savedIngredient);
     }
