@@ -341,6 +341,8 @@ public class RecipeService {
                     return new History(
                             userRepository.getReferenceById(userId),
                             ri,
+                            ri.getIngredient().getName(),
+                            ri.getUnit(),
                             used.doubleValue()
                     );
                 })

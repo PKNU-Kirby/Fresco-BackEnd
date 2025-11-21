@@ -62,10 +62,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -74,6 +74,6 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.tool.schema: DEBUG
-    com.example.fresco: DEBUG
+    org.hibernate.SQL: info
+    org.hibernate.tool.schema: info
+    com.example.fresco: info

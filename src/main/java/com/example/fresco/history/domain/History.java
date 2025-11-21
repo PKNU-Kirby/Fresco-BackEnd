@@ -21,13 +21,17 @@ public class History extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "refrigeratorIngredientId", nullable = false)
+    @JoinColumn(name = "refrigeratorIngredientId", nullable = true)
     private RefrigeratorIngredient refrigeratorIngredient;
 
+    private String ingredientName;
+    private String unit;
     private Double usedQuantity = 0.0;
 
-    public History(User user, RefrigeratorIngredient refrigeratorIngredient, Double usedQuantity) {
+    public History(User user, RefrigeratorIngredient refrigeratorIngredient, String ingredientName, String unit, Double usedQuantity) {
         this.user = user;
+        this.ingredientName = ingredientName;
+        this.unit = unit;
         this.refrigeratorIngredient = refrigeratorIngredient;
         this.usedQuantity = usedQuantity;
     }
