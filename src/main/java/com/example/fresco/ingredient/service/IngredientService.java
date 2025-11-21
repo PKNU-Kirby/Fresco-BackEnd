@@ -215,7 +215,7 @@ public class IngredientService {
         User consumer = userRepository.findById(command.userId()).orElseThrow(() -> new RestApiException(UserErrorCode.NULL_USER));
         double usedQuantity = prevIngredient.getQuantity() - command.quantity();
 
-        historyRepository.save(new History(consumer, prevIngredient, prevIngredient.getIngredient().getName(), prevIngredient.getUnit(), usedQuantity));
+        historyRepository.save(new History(consumer, prevIngredient, prevIngredient.getIngredient().getName(), prevIngredient.getUnit(), usedQuantity, prevIngredient.getRefrigerator().getId()));
     }
 
     public String deleteIngredients(List<Long> refrigeratorIngredientsidList, Long userId) {
@@ -225,7 +225,7 @@ public class IngredientService {
         List<History> histories = prevIngredients.stream()
                 .map(ingredient ->
                         new History(consumer, ingredient, ingredient.getIngredient().getName(), ingredient.getUnit(),
-                                ingredient.getQuantity()))
+                                ingredient.getQuantity(), ingredient.getRefrigerator().getId()))
                 .collect(Collectors.toList());
         historyRepository.saveAll(histories);
         refrigeratorIngredientRepository.deleteAllById(refrigeratorIngredientsidList);

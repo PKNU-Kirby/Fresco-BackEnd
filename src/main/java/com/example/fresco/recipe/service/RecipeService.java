@@ -343,7 +343,8 @@ public class RecipeService {
                             ri,
                             ri.getIngredient().getName(),
                             ri.getUnit(),
-                            used.doubleValue()
+                            used.doubleValue(),
+                            ri.getRefrigerator().getId()
                     );
                 })
                 .toList();

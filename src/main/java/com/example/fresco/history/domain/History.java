@@ -27,12 +27,14 @@ public class History extends BaseEntity {
     private String ingredientName;
     private String unit;
     private Double usedQuantity = 0.0;
+    private Long refrigeratorId;
 
-    public History(User user, RefrigeratorIngredient refrigeratorIngredient, String ingredientName, String unit, Double usedQuantity) {
+    public History(User user, RefrigeratorIngredient refrigeratorIngredient, String ingredientName, String unit, Double usedQuantity, Long refrigeratorId) {
         this.user = user;
         this.ingredientName = ingredientName;
         this.unit = unit;
         this.refrigeratorIngredient = refrigeratorIngredient;
         this.usedQuantity = usedQuantity;
+        this.refrigeratorId = refrigeratorId;
     }
 }
