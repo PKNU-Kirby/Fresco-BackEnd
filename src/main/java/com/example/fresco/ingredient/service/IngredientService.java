@@ -218,7 +218,16 @@ public class IngredientService {
         historyRepository.save(new History(consumer, prevIngredient, prevIngredient.getIngredient().getName(), prevIngredient.getUnit(), usedQuantity));
     }
 
-    public String deleteIngredients(List<Long> refrigeratorIngredientsidList) {
+    public String deleteIngredients(List<Long> refrigeratorIngredientsidList, Long userId) {
+        List<RefrigeratorIngredient> prevIngredients = refrigeratorIngredientRepository.findAllById(refrigeratorIngredientsidList);
+        User consumer = userRepository.findById(userId).orElseThrow(() -> new RestApiException(UserErrorCode.NULL_USER));
+
+        List<History> histories = prevIngredients.stream()
+                .map(ingredient ->
+                        new History(consumer, ingredient, ingredient.getIngredient().getName(), ingredient.getUnit(),
+                                ingredient.getQuantity()))
+                .collect(Collectors.toList());
+        historyRepository.saveAll(histories);
         refrigeratorIngredientRepository.deleteAllById(refrigeratorIngredientsidList);
         return "성공적으로 삭제되었습니다.";
     }

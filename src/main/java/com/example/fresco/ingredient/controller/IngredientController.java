@@ -90,9 +90,10 @@ public class IngredientController {
     // 식자재 삭제
     @DeleteMapping
     public SuccessResponse<String> deleteIngredients(
-            @RequestParam List<Long> ids
+            @RequestParam List<Long> ids,
+            @AuthenticationPrincipal Long userId
     ) {
         return SuccessResponse.of(IngredientSuccessCode.INGREDIENT_DELETE_SUCCESS,
-                ingredientService.deleteIngredients(ids));
+                ingredientService.deleteIngredients(ids, userId));
     }
 }
