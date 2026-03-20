@@ -1,0 +1,62 @@
+package com.example.fresco.refrigerator.controller;
+
+import com.example.fresco.global.response.SuccessResponse;
+import com.example.fresco.global.response.success.RefrigeratorSuccessCode;
+import com.example.fresco.refrigerator.controller.dto.request.refrigerator.*;
+import com.example.fresco.refrigerator.controller.dto.response.RefrigeratorInfoResponse;
+import com.example.fresco.refrigerator.service.RefrigeratorService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/v1/refrigerator")
+@RequiredArgsConstructor
+public class RefrigeratorController {
+    private final RefrigeratorService refrigeratorService;
+
+    @PostMapping
+    public SuccessResponse<RefrigeratorInfoResponse> createRefrigerator(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody RefrigeratorNameRequest request) {
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_CREATE_SUCCESS,
+                refrigeratorService.createRefrigerator(new CreateRefrigeratorRequest(userId, request.name())));
+    }
+
+    @DeleteMapping("/{refrigeratorId}")
+    public SuccessResponse<String> deleteRefrigerator(
+            @PathVariable Long refrigeratorId
+    ) {
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_DELETE_SUCCESS,
+                refrigeratorService.deleteRefrigerator(new DeleteRefrigeratorRequest(refrigeratorId)));
+    }
+
+    @PutMapping("/{refrigeratorId}")
+    public SuccessResponse<RefrigeratorInfoResponse> updateRefrigerator(
+            @NotNull @PathVariable Long refrigeratorId,
+            @Valid @RequestBody RefrigeratorNameRequest request) {
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_UPDATE_SUCCESS,
+                refrigeratorService.updateRefrigerator(new UpdateRefrigeratorRequest(refrigeratorId, request.name())));
+    }
+
+    @GetMapping
+    public SuccessResponse<List<RefrigeratorInfoResponse>> getAllRefrigerator(
+            @AuthenticationPrincipal Long userId
+    ) {
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_LIST_SUCCESS,
+                refrigeratorService.getAllRefrigerator(new GetAllRefrigeratorRequest(userId)));
+    }
+
+    @GetMapping("/permissions")
+    public SuccessResponse<Map<Long, Boolean>> getPermissionRefrigerator(
+            @AuthenticationPrincipal Long userId
+    ){
+        return SuccessResponse.of(RefrigeratorSuccessCode.REFRIGERATOR_PERMISSION_SUCCESS,
+                refrigeratorService.getEditableMapByUser(userId));
+    }
+}

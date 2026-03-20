@@ -1,0 +1,15 @@
+spring:
+  config:
+    import:
+      - optional:file:./src/main/resources/application-secret.yml
+
+  cloud:
+    aws:
+      parameter-store:
+        firebase-parameter: /firebase/service-account-dev
+
+  datasource:
+    url: jdbc:mysql://43.203.174.184:3306/fresco?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: ${mysql.username}
+    password: ${mysql.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
